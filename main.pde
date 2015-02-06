@@ -1,14 +1,17 @@
-Maps maps;
 Key key;
+World world;
+Maps maps;
 Character cha;
 Player player;
-
+NPC npc;
 void setup(){
   size(480, 480);
-  maps = new Maps();
   key =new Key();
+  world = new World();
+  maps = new Maps();
   cha =new Character();
   player =new Player();
+  npc = new NPC();
 }
 
 void draw(){
@@ -17,6 +20,8 @@ void draw(){
   maps.Draw_back();
   player.draw();
   maps.Draw_front();
+  println(player.about_chipX());
+  println(player.about_chipY());
 }
 
 void keyPressed(){

@@ -14,6 +14,7 @@ class Maps{
     image(map2, 0, 0);
   }
   color hash(color colorX,color colorY){
-     return hash.pixels[(colorY)*hash.width+(colorX)];
+     if(X<0 && X>(world.mapsizeX-1)*world.mapchipsize && Y>0 && Y<(world.mapsizeY-1)*world.mapchipsize)return hash.pixels[(colorY)*hash.width+(colorX)];
+     else return(0);
   }
 }
