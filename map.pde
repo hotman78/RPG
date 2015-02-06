@@ -14,7 +14,10 @@ class Maps{
     image(map2, 0, 0);
   }
   color hash(color colorX,color colorY){
-     if(X<0 && X>(world.mapsizeX-1)*world.mapchipsize && Y>0 && Y<(world.mapsizeY-1)*world.mapchipsize)return hash.pixels[(colorY)*hash.width+(colorX)];
-     else return(0);
+     if(player.chipX()>0 
+         && player.chipX()<world.mapsizeX-1 
+         && player.chipY()>0 
+         && player.chipY()<world.mapsizeY-1)return hash.pixels[colorY*hash.width+colorX];
+     else return color(0);
   }
 }

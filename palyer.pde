@@ -7,10 +7,10 @@ class Player extends Character{
   int player_direction=2;
   int movingX=world.mapchipsize;
   int movingY=world.mapchipsize;
-  int speed=1;
+  float speed=1;
   Player(){
     load_image("player");
-    X=15;Y=15;
+    X=world.mapchipsize*15;Y=world.mapchipsize*15;
   }
   float chipX(){
     return X/world.mapchipsize;
@@ -19,10 +19,10 @@ class Player extends Character{
     return Y/world.mapchipsize;
   }
   int about_chipX(){
-    return (int)X/world.mapchipsize;
+    return floor(X/world.mapchipsize);
   }
   int about_chipY(){
-    return (int)Y/world.mapchipsize;
+    return floor(Y/world.mapchipsize);
   }
   void move(){
       if(movingX!=0){
