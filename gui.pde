@@ -1,3 +1,3 @@
-class gui{
+/*class gui{
   void window(int windowsizeX,int windowsizeY,PImage )
-}
+}*/
