@@ -20,6 +20,7 @@ void draw(){
   maps.Draw_back();
   player.draw();
   maps.Draw_front();
+  println(player.about_chipY());
 }
 
 void keyPressed(){

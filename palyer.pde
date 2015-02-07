@@ -13,16 +13,16 @@ class Player extends Character{
     X=world.mapchipsize*15;Y=world.mapchipsize*15;
   }
   float chipX(){
-    return X/world.mapchipsize;
+    return X/world.mapchipsize+1;
   }
   float chipY(){
-    return Y/world.mapchipsize;
+    return Y/world.mapchipsize+1;
   }
   int about_chipX(){
-    return floor(X/world.mapchipsize);
+    return floor(X/world.mapchipsize)+1;
   }
   int about_chipY(){
-    return floor(Y/world.mapchipsize);
+    return floor(Y/world.mapchipsize)+1;
   }
   void move(){
       if(movingX!=0){

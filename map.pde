@@ -13,11 +13,11 @@ class Maps{
   void Draw_front(){
     image(map2, 0, 0);
   }
-  color hash(color colorX,color colorY){
-     if(player.chipX()>0 
-         && player.chipX()<world.mapsizeX-1 
-         && player.chipY()>0 
-         && player.chipY()<world.mapsizeY-1)return hash.pixels[colorY*hash.width+colorX];
+  color hash(int X,int Y){
+     if(X>0
+         && X<world.mapsizeX+1
+         && Y>0 
+         && Y<world.mapsizeY+1)return hash.pixels[(Y-1)*hash.width+(X-1)];
      else return color(0);
   }
 }
