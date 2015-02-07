@@ -4,6 +4,7 @@ Maps maps;
 Character cha;
 Player player;
 NPC npc;
+Config config;
 void setup(){
   size(480, 480);
   key =new Key();
@@ -12,10 +13,10 @@ void setup(){
   cha =new Character();
   player =new Player();
   npc = new NPC();
+  config =new Config();
 }
 
 void draw(){
-  key.key();
   player.move();
   maps.Draw_back();
   player.draw();
