@@ -1,6 +1,5 @@
 class Player extends Character{
-  int X;
-  int Y;
+  int X;int Y;
   int about_chipX;int about_chipY;
   int move_directionX=0;
   int move_directionY=0;
