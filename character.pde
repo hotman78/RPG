@@ -2,8 +2,7 @@ class Character{
   PImage down,up,left,right;
   int X;int Y;
   int about_chipX;int about_chipY;
-  int move_directionX;
-  int move_directionY;
+  int move_directionX,move_directionY;
   int direction;
   int movingX;
   int movingY;
@@ -18,9 +17,21 @@ class Character{
   }
   void talk(){
     if(key.enter){
-      
+      if(here("NPC",12,12))text("a",10,10);
     }
   }
+  boolean here(String option,int x,int y){
+    if (option.equals("NPC")){
+      if(x == npc_co.about_chipX() 
+      && y == npc_co.about_chipY())return true;
+      else return false;
+    }
+    if (option.equals("player")){
+      if(x==player.about_chipX() && y==player.about_chipY())return true;
+      else return false;
+    }
+    else return false;
+ }
   void move_option(String par){
     if(par=="key")move_option="key";
     if(par=="random_walk")move_option="random_walk";
@@ -95,8 +106,8 @@ class Character{
     speed=speed_replace;
   }
   void set_position(int set_X,int set_Y){
-    X=set_X*world.mapchipsize;
-    Y=set_Y*world.mapchipsize;
+    X=set_X*world.mapchipsize-1;
+    Y=set_Y*world.mapchipsize-1;
   }
   void load_image(String file_name){
     down =loadImage(file_name+"_down.png");
