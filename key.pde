@@ -1,25 +1,33 @@
 class Key{
-    int key_up = 0;
-    int key_down = 0;
-    int key_right = 0;
-    int key_left = 0;
-    int key_shift = 0;
-    int key_enter = 0;
+    boolean up;
+    boolean down;
+    boolean right;
+    boolean left;
+    boolean shift;
+    boolean enter;
+    Key(){
+      up=false;
+      down=false;
+      right=false;
+      left=false;
+      shift=false;
+      enter=false;
+    }
   void keyPressed(){
-    if(keyCode==UP) key_up = 1;
-    else if(keyCode==DOWN) key_down = 1;
-    else if(keyCode==RIGHT) key_right = 1;
-    else if(keyCode==LEFT) key_left = 1;
-    else if(keyCode==SHIFT) key_shift = 1;
-    else if(keyCode==ENTER) key_enter = 1;
+    if(keyCode==UP) up = true;
+    else if(keyCode==DOWN) down = true;
+    else if(keyCode==RIGHT) right = true;
+    else if(keyCode==LEFT) left = true;
+    else if(keyCode==SHIFT) shift = true;
+    else if(keyCode==ENTER) enter = true;
   }
     
   void keyReleased(){
-    if(keyCode==UP) key_up = 0;
-    else if(keyCode==DOWN)  key_down = 0;
-    else if(keyCode==RIGHT) key_right = 0;
-    else if(keyCode==LEFT)  key_left = 0;
-    else if(keyCode==SHIFT) key_shift = 0;
-    else if(keyCode==ENTER) key_enter = 0;
+    if(keyCode==UP) up = false;
+    else if(keyCode==DOWN)  down = false;
+    else if(keyCode==RIGHT) right= false;
+    else if(keyCode==LEFT)  left = false;
+    else if(keyCode==SHIFT) shift = false;
+    else if(keyCode==ENTER) enter = false;
   }
 }

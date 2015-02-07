@@ -3,8 +3,9 @@ World world;
 Maps maps;
 Character cha;
 Player player;
-NPC npc;
+NPC_co npc_co;
 Config config;
+
 void setup(){
   size(480, 480);
   key =new Key();
@@ -12,15 +13,12 @@ void setup(){
   maps = new Maps();
   cha =new Character();
   player =new Player();
-  npc = new NPC();
+  npc_co = new NPC_co();
   config =new Config();
 }
 
 void draw(){
-  player.move();
-  maps.Draw_back();
-  player.draw();
-  maps.Draw_front();
+  world.draw();
 }
 
 void keyPressed(){

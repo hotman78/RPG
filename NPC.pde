@@ -1,9 +1,11 @@
-class NPC extends Character{
-  NPC(){
+class NPC_co extends Character{
+  NPC_co(){
     load_image("yellow");
     speed(3);
-    set_position(30,30);
-    X=world.mapchipsize*15;Y=world.mapchipsize*15;
-  } 
+    set_position(12,12);
+    //move_option("random_walk");
+  }
+  void talk_event(){
+  }
 }
 

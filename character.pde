@@ -16,11 +16,18 @@ class Character{
     movingX=world.mapchipsize;
     movingY=world.mapchipsize;
   }
+  void talk(){
+    if(key.enter){
+      
+    }
+  }
   void move_option(String par){
     if(par=="key")move_option="key";
+    if(par=="random_walk")move_option="random_walk";
   }
   void move(){
     if(move_option=="key")key_move();
+    if(move_option=="random_walk")random_walk();
       if(movingX!=0){
         if(move_directionX!=0 && movingX<speed)movingX=0;
         else if(move_directionX!=0)movingX-=speed;
@@ -42,11 +49,23 @@ class Character{
       move_directionY=0;
     }
   }
+  void random_walk(){
+    if(move_directionX==0 && move_directionY==0){
+      int i =floor(random(0,5));
+      switch(i){
+        case 1:move_up();break;
+        case 2:move_down();break;
+        case 3:move_left();break;
+        case 4:move_right();break;
+      }
+    }
+  }
+  
   void key_move(){
-    if(key.key_up==1)move_up();
-    if(key.key_down==1)move_down();
-    if(key.key_left==1)move_left();
-    if(key.key_right==1)move_right();
+    if(key.up)move_up();
+    if(key.down)move_down();
+    if(key.left)move_left();
+    if(key.right)move_right();
   }
   void move_up(){
     if(move_directionY==0 && maps.hash(about_chipX(),about_chipY()-1)!=color(0)){
@@ -76,7 +95,6 @@ class Character{
     speed=speed_replace;
   }
   void set_position(int set_X,int set_Y){
-    println("a");
     X=set_X*world.mapchipsize;
     Y=set_Y*world.mapchipsize;
   }

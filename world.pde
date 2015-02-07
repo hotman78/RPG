@@ -5,4 +5,13 @@ class World{
   World(){
     
   }
+  void draw(){
+  player.move();
+  npc_co.move();
+  maps.Draw_back();
+  player.draw();
+  npc_co.draw();
+  maps.Draw_front();
+  player.talk();
+  }
 }
