@@ -8,4 +8,3 @@ class NPC_co extends Character{
   void talk_event(){
   }
 }
-
