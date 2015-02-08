@@ -7,7 +7,7 @@ class Character{
   int movingX;
   int movingY;
   float speed;
-  String move_option;
+  WALK move_option;
   Character(){
     move_directionX=0;
     move_directionY=0;
@@ -21,24 +21,21 @@ class Character{
     }
   }
   boolean here(String option,int x,int y){
-    if (option.equals("NPC")){
-      if(x == npc_co.about_chipX() 
-      && y == npc_co.about_chipY())return true;
-      else return false;
-    }
-    if (option.equals("player")){
-      if(x==player.about_chipX() && y==player.about_chipY())return true;
-      else return false;
-    }
+    if(option.equals("NPC"))return (x==npc_co.about_chipX() && y==npc_co.about_chipY());
+    else if(option.equals("player"))return (x==player.about_chipX() && y==player.about_chipY());
     else return false;
- }
-  void move_option(String par){
-    if(par=="key")move_option="key";
-    if(par=="random_walk")move_option="random_walk";
+  }
+  void move_option(WALK par){
+    switch(par){
+      case key_walk: move_option=WALK.key_walk;break;
+      case random: move_option=WALK.random;break;
+    }
   }
   void move(){
-    if(move_option=="key")key_move();
-    if(move_option=="random_walk")random_walk();
+    switch(move_option){
+      case key_walk:key_move();break;
+      case random:random_walk();break;
+    }
       if(movingX!=0){
         if(move_directionX!=0 && movingX<speed)movingX=0;
         else if(move_directionX!=0)movingX-=speed;
