@@ -21,31 +21,7 @@ class Character{
     }
   }
   void update(){
-    switch(move_option){
-      case key_walk:key_move();break;
-      case random:random_walk();break;
-      default:break;
-    }
-    if(movingX!=0){
-      if(move_directionX!=0 && movingX<speed)movingX=0;
-      else if(move_directionX!=0)movingX-=speed;
-      if(move_directionX==1)X-=speed;
-      if(move_directionX==2)X+=speed;
-    }
-    if(movingX==0){
-      movingX=world.mapchipsize;
-      move_directionX=0;
-    }
-    if(movingY!=0){
-      if(move_directionY!=0 && movingY<speed)movingY=0;
-      else if(move_directionY!=0)movingY-=speed;
-      if(move_directionY==1)Y-=speed;
-      if(move_directionY==2)Y+=speed;
-    }
-    if(movingY==0){
-      movingY=world.mapchipsize;
-      move_directionY=0;
-    }    
+    col.update((Character)this);    
   }
   void random_walk(){
     if(move_directionX==0 && move_directionY==0){
@@ -66,25 +42,25 @@ class Character{
     if(key.right)move_right();
   }
   void move_up(){
-    if(move_directionY==0 && maps.hash(aboutX(),aboutY()-1)!=color(0)){
+    if(move_directionY==0 && maps.here(aboutX(),aboutY()-1)){
       move_directionY=1;
       direction=1;
     }
   }
   void move_down(){
-    if(move_directionY==0 && maps.hash(aboutX(),aboutY()+1)!=color(0)){
+    if(move_directionY==0 && maps.here(aboutX(),aboutY()+1)){
       move_directionY=2;
       direction=2;
     }
   }
   void move_left(){
-    if(move_directionX==0 && maps.hash(aboutX()-1,aboutY())!=color(0)){
+    if(move_directionX==0 && maps.here(aboutX()-1,aboutY())){
       move_directionX=1;
       direction=3;
     }
   }
   void move_right(){
-    if(move_directionX==0 && maps.hash(aboutX()+1,aboutY())!=color(0)){
+    if(move_directionX==0 && maps.here(aboutX()+1,aboutY())){
       move_directionX=2;
       direction=4;
     }
@@ -93,8 +69,8 @@ class Character{
     speed=speed_replace;
   }
   void set_position(int set_X,int set_Y){
-    X=set_X*world.mapchipsize-1;
-    Y=set_Y*world.mapchipsize-1;
+    X=set_X*world.mapchipsize;
+    Y=set_Y*world.mapchipsize;
   }
   void load_image(String file_name){
     down =loadImage(file_name+"_down.png");
@@ -109,16 +85,16 @@ class Character{
     if(direction==4)image(right,X,Y);
   }
   float chipX(){
-    return X/world.mapchipsize+2;
+    return X/world.mapchipsize+1;
   }
   float chipY(){
-    return Y/world.mapchipsize+2;
+    return Y/world.mapchipsize+1;
   }
   int aboutX(){
-    return floor(X/world.mapchipsize)+2;
+    return floor(X/world.mapchipsize)+1;
   }
   int aboutY(){
-    return floor(Y/world.mapchipsize)+2;
+    return floor(Y/world.mapchipsize)+1;
   }
   void set(){
     this.move_directionX=0;

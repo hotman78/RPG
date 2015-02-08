@@ -18,4 +18,7 @@ class Maps{
      return hash.pixels[(Y-1)*hash.width+(X-1)];
      else return color(0);
   }
+  boolean here(int X,int Y){
+    return (maps.hash(X,Y)!=color(0));
+  }
 }

@@ -13,5 +13,6 @@ class World{
   npc_co.draw();
   maps.Draw_front();
   player.talk();
+  config.debug();
   }
 }
