@@ -6,8 +6,8 @@ class World{
     
   }
   void draw(){
-  player.move();
-  npc_co.move();
+  player.update();
+  npc_co.update();
   maps.Draw_back();
   player.draw();
   npc_co.draw();

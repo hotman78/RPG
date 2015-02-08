@@ -4,5 +4,6 @@ class Player extends Character{
     speed(1);
     set_position(15,15);
     move_option(WALK.key_walk);
+    set();
   }
 }

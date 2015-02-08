@@ -4,6 +4,7 @@ class NPC_co extends Character{
     speed(1);
     set_position(12,12);
     move_option(WALK.random);
+    set();
   }
   void talk_event(){
   }

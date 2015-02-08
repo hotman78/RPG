@@ -2,33 +2,25 @@ class Character{
   PImage down,up,left,right;
   int X;int Y;
   int aboutX;int aboutY;
+  float speed;
+  WALK move_option;
   int move_directionX,move_directionY;
   int direction;
   int movingX;
   int movingY;
-  float speed;
-  WALK move_option;
-  
-  Character(){
-    move_directionX=0;
-    move_directionY=0;
-    direction=2;
-    movingX=world.mapchipsize;
-    movingY=world.mapchipsize;
-  }
   void talk(){
     if(key.enter){
       if(npc_co.here(12,12))text("a",10,10);
     }
   }
-  boolean here(int x,int y){return (x==this.aboutX() && y==this.aboutY());}
+  boolean here(int x,int y){return (x==this.aboutX()-1 && y==this.aboutY()-1);}
   void move_option(WALK par){
     switch(par){
       case key_walk: move_option=WALK.key_walk;break;
       case random: move_option=WALK.random;break;
     }
   }
-  void move(){
+  void update(){
     switch(move_option){
       case key_walk:key_move();break;
       case random:random_walk();break;
@@ -40,10 +32,10 @@ class Character{
       if(move_directionX==1)X-=speed;
       if(move_directionX==2)X+=speed;
     }
-      if(movingX==0){
-        movingX=world.mapchipsize;
-        move_directionX=0;
-      }
+    if(movingX==0){
+      movingX=world.mapchipsize;
+      move_directionX=0;
+    }
     if(movingY!=0){
       if(move_directionY!=0 && movingY<speed)movingY=0;
       else if(move_directionY!=0)movingY-=speed;
@@ -53,7 +45,7 @@ class Character{
     if(movingY==0){
       movingY=world.mapchipsize;
       move_directionY=0;
-    }
+    }    
   }
   void random_walk(){
     if(move_directionX==0 && move_directionY==0){
@@ -117,15 +109,22 @@ class Character{
     if(direction==4)image(right,X,Y);
   }
   float chipX(){
-    return X/world.mapchipsize+1;
+    return X/world.mapchipsize+2;
   }
   float chipY(){
-    return Y/world.mapchipsize+1;
+    return Y/world.mapchipsize+2;
   }
   int aboutX(){
-    return floor(X/world.mapchipsize)+1;
+    return floor(X/world.mapchipsize)+2;
   }
   int aboutY(){
-    return floor(Y/world.mapchipsize)+1;
+    return floor(Y/world.mapchipsize)+2;
+  }
+  void set(){
+    this.move_directionX=0;
+    this.move_directionY=0;
+    this.direction=2;
+    this.movingX=world.mapchipsize;
+    this.movingY=world.mapchipsize;
   }
 }
