@@ -8,25 +8,23 @@ class Collider{
       case random:my.random_walk();break;
       default:break;
     }
-    if(my.movingX!=0){
-      if(my.move_directionX!=0 && my.movingX<my.speed)my.movingX=0;
-      else if(my.move_directionX!=0)my.movingX-=my.speed;
-      if(my.move_directionX==1)my.X-=my.speed;
-      if(my.move_directionX==2)my.X+=my.speed;
-    }
     if(my.movingX==0){
       my.movingX=world.mapchipsize;
-      my.move_directionX=0;
-    }
-    if(my.movingY!=0){
-      if(my.move_directionY!=0 && my.movingY<my.speed)my.movingY=0;
-      else if(my.move_directionY!=0)my.movingY-=my.speed;
-      if(my.move_directionY==1)my.Y-=my.speed;
-      if(my.move_directionY==2)my.Y+=my.speed;
+      my.move_directionX=Direction.STAY;
+    }else{
+      if(my.move_directionX!=Direction.STAY && my.movingX<my.speed)my.movingX=0;
+      else if(my.move_directionX!=Direction.STAY)my.movingX-=my.speed;
+      if(my.move_directionX==Direction.LEFT)my.X-=my.speed;
+      if(my.move_directionX==Direction.RIGHT)my.X+=my.speed;
     }
     if(my.movingY==0){
       my.movingY=world.mapchipsize;
-      my.move_directionY=0;
+      my.move_directionY=Direction.STAY;
+    }else{
+      if(my.move_directionY!=Direction.STAY && my.movingY<my.speed)my.movingY=0;
+      else if(my.move_directionY!=Direction.STAY)my.movingY-=my.speed;
+      if(my.move_directionY==Direction.UP)my.Y-=my.speed;
+      if(my.move_directionY==Direction.DOWN)my.Y+=my.speed;
     }    
   }
 }

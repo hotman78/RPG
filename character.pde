@@ -4,8 +4,8 @@ class Character{
   int aboutX;int aboutY;
   float speed;
   WALK move_option;
-  int move_directionX,move_directionY;
-  int direction;
+  Direction move_directionX,move_directionY;
+  Direction direction;
   int movingX;
   int movingY;
   void talk(){
@@ -21,10 +21,10 @@ class Character{
     }
   }
   void update(){
-    col.update((Character)this);    
+    col.update((Character)this); 
   }
   void random_walk(){
-    if(move_directionX==0 && move_directionY==0){
+    if(move_directionX==Direction.STAY && move_directionY==Direction.STAY){
       int i =floor(random(0,5));
       switch(i){
         case 1:move_up();break;
@@ -42,27 +42,27 @@ class Character{
     if(key.right)move_right();
   }
   void move_up(){
-    if(move_directionY==0 && maps.here(aboutX(),aboutY()-1)){
-      move_directionY=1;
-      direction=1;
+    if(move_directionY==Direction.STAY && maps.here(aboutX(),aboutY()-1)){
+      move_directionY=Direction.UP;
+      direction=Direction.UP;
     }
   }
   void move_down(){
-    if(move_directionY==0 && maps.here(aboutX(),aboutY()+1)){
-      move_directionY=2;
-      direction=2;
+    if(move_directionY==Direction.STAY && maps.here(aboutX(),aboutY()+1)){
+      move_directionY=Direction.DOWN;
+      direction=Direction.DOWN;
     }
   }
   void move_left(){
-    if(move_directionX==0 && maps.here(aboutX()-1,aboutY())){
-      move_directionX=1;
-      direction=3;
+    if(move_directionX==Direction.STAY && maps.here(aboutX()-1,aboutY())){
+      move_directionX=Direction.LEFT;
+      direction=Direction.LEFT;
     }
   }
   void move_right(){
-    if(move_directionX==0 && maps.here(aboutX()+1,aboutY())){
-      move_directionX=2;
-      direction=4;
+    if(move_directionX==Direction.STAY && maps.here(aboutX()+1,aboutY())){
+      move_directionX=Direction.RIGHT;
+      direction=Direction.RIGHT;
     }
   }
   void speed(float speed_replace){
@@ -79,10 +79,10 @@ class Character{
     right =loadImage(file_name+"_right.png"); 
   }
   void draw(){
-    if(direction==1)image(up,X,Y);
-    if(direction==2)image(down,X,Y);
-    if(direction==3)image(left,X,Y);
-    if(direction==4)image(right,X,Y);
+    if(direction==Direction.UP)image(up,X,Y);
+    if(direction==Direction.DOWN)image(down,X,Y);
+    if(direction==Direction.LEFT)image(left,X,Y);
+    if(direction==Direction.RIGHT)image(right,X,Y);
   }
   float chipX(){
     return X/world.mapchipsize+1;
@@ -97,9 +97,9 @@ class Character{
     return floor(Y/world.mapchipsize)+1;
   }
   void set(){
-    this.move_directionX=0;
-    this.move_directionY=0;
-    this.direction=2;
+    this.move_directionX=Direction.STAY;
+    this.move_directionY=Direction.STAY;
+    this.direction=Direction.UP;
     this.movingX=world.mapchipsize;
     this.movingY=world.mapchipsize;
   }
