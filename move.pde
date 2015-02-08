@@ -1,7 +1,4 @@
-class Collider{
-  Collider(){
-    
-  }
+class Move{
   void update(Character my){
     switch(my.move_option){
       case key_walk:my.key_move();break;

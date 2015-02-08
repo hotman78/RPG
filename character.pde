@@ -21,7 +21,7 @@ class Character{
     }
   }
   void update(){
-    col.update((Character)this); 
+    mv.update((Character)this);
   }
   void random_walk(){
     if(move_directionX==Direction.STAY && move_directionY==Direction.STAY){
@@ -40,6 +40,9 @@ class Character{
     if(key.down)move_down();
     if(key.left)move_left();
     if(key.right)move_right();
+  }
+  boolean col(int y,int x){
+    return move_directionY==Direction.STAY && maps.here(x,y);
   }
   void move_up(){
     if(move_directionY==Direction.STAY && maps.here(aboutX(),aboutY()-1)){
