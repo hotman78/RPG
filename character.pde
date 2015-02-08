@@ -23,37 +23,27 @@ class Character{
   }
   
   void key_move(){
-    if(key.up)move_up();
-    if(key.down)move_down();
-    if(key.left)move_left();
-    if(key.right)move_right();
+    if(key.up)move(Direction.UP);
+    if(key.down)move(Direction.DOWN);
+    if(key.left)move(Direction.LEFT);
+    if(key.right)move(Direction.RIGHT);
+  }
+  void random_walk(){
+    if(move_directionX==Direction.STAY && move_directionY==Direction.STAY){
+      int i =floor(random(0,5));
+      switch(i){
+        case 1:move(Direction.UP);break;
+        case 2:move(Direction.DOWN);break;
+        case 3:move(Direction.LEFT);break;
+        case 4:move(Direction.RIGHT);break;
+      }
+    }
   }
   boolean col(Direction dir,int y,int x){
     return dir==Direction.STAY && maps.here(x,y);
   }
-  void move_up(){
-    if(move_directionY==Direction.STAY && maps.here(aboutX(),aboutY()-1)){
-      move_directionY=Direction.UP;
-      direction=Direction.UP;
-    }
-  }
-  void move_down(){
-    if(move_directionY==Direction.STAY && maps.here(aboutX(),aboutY()+1)){
-      move_directionY=Direction.DOWN;
-      direction=Direction.DOWN;
-    }
-  }
-  void move_left(){
-    if(move_directionX==Direction.STAY && maps.here(aboutX()-1,aboutY())){
-      move_directionX=Direction.LEFT;
-      direction=Direction.LEFT;
-    }
-  }
-  void move_right(){
-    if(move_directionX==Direction.STAY && maps.here(aboutX()+1,aboutY())){
-      move_directionX=Direction.RIGHT;
-      direction=Direction.RIGHT;
-    }
+  void move(Direction a){
+    a.collider();
   }
   void speed(float speed_replace){
     speed=speed_replace;
@@ -118,16 +108,5 @@ class Character{
       if(move_directionY==Direction.UP)Y-=speed;
       if(move_directionY==Direction.DOWN)Y+=speed;
     }    
-  }
-  void random_walk(){
-    if(move_directionX==Direction.STAY && move_directionY==Direction.STAY){
-      int i =floor(random(0,5));
-      switch(i){
-        case 1:move_up();break;
-        case 2:move_down();break;
-        case 3:move_left();break;
-        case 4:move_right();break;
-      }
-    }
   }
 }
