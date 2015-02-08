@@ -10,7 +10,7 @@ class Character{
   int movingY;
   void talk(){
     if(key.enter){
-      if(npc_co.here(12,12))text("a",10,10);
+      if(npc_co.here(aboutX(),aboutY()))text("a",10,10);
     }
   }
   boolean here(int x,int y){return (x==this.aboutX()-1 && y==this.aboutY()-1);}
@@ -18,20 +18,7 @@ class Character{
     switch(par){
       case key_walk: move_option=WALK.key_walk;break;
       case random: move_option=WALK.random;break;
-    }
-  }
-  void update(){
-    mv.update((Character)this);
-  }
-  void random_walk(){
-    if(move_directionX==Direction.STAY && move_directionY==Direction.STAY){
-      int i =floor(random(0,5));
-      switch(i){
-        case 1:move_up();break;
-        case 2:move_down();break;
-        case 3:move_left();break;
-        case 4:move_right();break;
-      }
+      case stay:move_option=WALK.stay;break;
     }
   }
   
@@ -41,8 +28,8 @@ class Character{
     if(key.left)move_left();
     if(key.right)move_right();
   }
-  boolean col(int y,int x){
-    return move_directionY==Direction.STAY && maps.here(x,y);
+  boolean col(Direction dir,int y,int x){
+    return dir==Direction.STAY && maps.here(x,y);
   }
   void move_up(){
     if(move_directionY==Direction.STAY && maps.here(aboutX(),aboutY()-1)){
@@ -105,5 +92,42 @@ class Character{
     this.direction=Direction.UP;
     this.movingX=world.mapchipsize;
     this.movingY=world.mapchipsize;
+  }
+  void update(){
+    switch(move_option){
+      case key_walk:key_move();break;
+      case random:random_walk();break;
+      case stay:break;
+      default:break;
+    }
+    if(movingX==0){
+      movingX=world.mapchipsize;
+      move_directionX=Direction.STAY;
+    }else{
+      if(move_directionX!=Direction.STAY && movingX<speed)movingX=0;
+      else if(move_directionX!=Direction.STAY)movingX-=speed;
+      if(move_directionX==Direction.LEFT)X-=speed;
+      if(move_directionX==Direction.RIGHT)X+=speed;
+    }
+    if(movingY==0){
+      movingY=world.mapchipsize;
+      move_directionY=Direction.STAY;
+    }else{
+      if(move_directionY!=Direction.STAY && movingY<speed)movingY=0;
+      else if(move_directionY!=Direction.STAY)movingY-=speed;
+      if(move_directionY==Direction.UP)Y-=speed;
+      if(move_directionY==Direction.DOWN)Y+=speed;
+    }    
+  }
+  void random_walk(){
+    if(move_directionX==Direction.STAY && move_directionY==Direction.STAY){
+      int i =floor(random(0,5));
+      switch(i){
+        case 1:move_up();break;
+        case 2:move_down();break;
+        case 3:move_left();break;
+        case 4:move_right();break;
+      }
+    }
   }
 }
