@@ -9,9 +9,7 @@ class Character{
   int movingX;
   int movingY;
   void talk(){
-    if(key.enter){
-      if(npc_co.here(aboutX(),aboutY()))text("a",10,10);
-    }
+    if(npc_co.here(13,13))text("a",10,100);
   }
   boolean here(int x,int y){return (x==this.aboutX()-1 && y==this.aboutY()-1);}
   void move_option(WALK par){
@@ -43,7 +41,32 @@ class Character{
     return dir==Direction.STAY && maps.here(x,y);
   }
   void move(Direction a){
-    a.collider();
+    switch(a){
+      case UP:
+      if(move_directionY==Direction.STAY && maps.here(aboutX(),aboutY()-1)){
+        move_directionY=Direction.UP;
+        direction=Direction.UP;
+      }
+      break;
+      case DOWN:
+      if(move_directionY==Direction.STAY && maps.here(aboutX(),aboutY()+1)){
+        move_directionY=Direction.DOWN;
+        direction=Direction.DOWN;
+      }
+      break;
+      case LEFT:
+      if(move_directionX==Direction.STAY && maps.here(aboutX()-1,aboutY())){
+        move_directionX=Direction.LEFT;
+        direction=Direction.LEFT;
+      }
+      break;
+      case RIGHT:
+      if(move_directionX==Direction.STAY && maps.here(aboutX()+1,aboutY())){
+        move_directionX=Direction.RIGHT;
+        direction=Direction.RIGHT;
+      }
+      break;
+    }
   }
   void speed(float speed_replace){
     speed=speed_replace;
