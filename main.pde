@@ -2,7 +2,7 @@ Key key;
 World world;
 Maps maps;
 Player player;
-NPC_co npc_co;
+NPC npc;
 Config config;
 void setup(){
   size(480, 480);
@@ -10,7 +10,7 @@ void setup(){
   world=new World();
   maps=new Maps();
   player=new Player();
-  npc_co=new NPC_co();
+  npc=new NPC();
   config=new Config();
 }
 

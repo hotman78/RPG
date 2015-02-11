@@ -2,17 +2,23 @@ class World{
   int mapsizeX=30;
   int mapsizeY=30;
   int mapchipsize = 16;
+  boolean can_move;
   World(){
-    
+    can_move=true;
   }
   void draw(){
-  player.update();
-  npc_co.update();
+  if(can_move){
+    player.update();
+    npc.update();
+  }
   maps.Draw_back();
   player.draw();
-  npc_co.draw();
+  npc.draw();
   maps.Draw_front();
-  player.talk();
   config.debug();
+  player.talk();
+  }
+  void stop(){
+    can_move=false;
   }
 }

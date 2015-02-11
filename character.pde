@@ -8,10 +8,10 @@ class Character{
   Direction direction;
   int movingX;
   int movingY;
-  void talk(){
-    if(npc_co.here(13,13))text("a",10,100);
-  }
-  boolean here(int x,int y){return (x==this.aboutX()-1 && y==this.aboutY()-1);}
+  int talk_flag;
+  void talk(){};
+  boolean here(int x,int y){return (x==this.aboutX() && y==this.aboutY());}
+  
   void move_option(WALK par){
     switch(par){
       case key_walk: move_option=WALK.key_walk;break;
@@ -43,25 +43,33 @@ class Character{
   void move(Direction a){
     switch(a){
       case UP:
-      if(move_directionY==Direction.STAY && maps.here(aboutX(),aboutY()-1)){
+      if(move_directionY==Direction.STAY
+      && maps.here(aboutX(),aboutY()-1)
+      && !npc.here(aboutX(),aboutY()-1)){
         move_directionY=Direction.UP;
         direction=Direction.UP;
       }
       break;
       case DOWN:
-      if(move_directionY==Direction.STAY && maps.here(aboutX(),aboutY()+1)){
+      if(move_directionY==Direction.STAY
+      && maps.here(aboutX(),aboutY()+1)
+      && !npc.here(aboutX(),aboutY()+1)){
         move_directionY=Direction.DOWN;
         direction=Direction.DOWN;
       }
       break;
       case LEFT:
-      if(move_directionX==Direction.STAY && maps.here(aboutX()-1,aboutY())){
+      if(move_directionX==Direction.STAY
+      && maps.here(aboutX()-1,aboutY())
+      && !npc.here(aboutX()-1,aboutY())){
         move_directionX=Direction.LEFT;
         direction=Direction.LEFT;
       }
       break;
       case RIGHT:
-      if(move_directionX==Direction.STAY && maps.here(aboutX()+1,aboutY())){
+      if(move_directionX==Direction.STAY
+      && maps.here(aboutX()+1,aboutY())
+      && !npc.here(aboutX()+1,aboutY())){
         move_directionX=Direction.RIGHT;
         direction=Direction.RIGHT;
       }
@@ -82,10 +90,12 @@ class Character{
     right =loadImage(file_name+"_right.png"); 
   }
   void draw(){
-    if(direction==Direction.UP)image(up,X,Y);
-    if(direction==Direction.DOWN)image(down,X,Y);
-    if(direction==Direction.LEFT)image(left,X,Y);
-    if(direction==Direction.RIGHT)image(right,X,Y);
+    switch(direction){
+      case UP:image(up,X,Y);break;
+      case DOWN:image(down,X,Y);break;
+      case LEFT:image(left,X,Y);break;
+      case RIGHT:image(right,X,Y);break;
+    }
   }
   float chipX(){
     return X/world.mapchipsize+1;
@@ -130,6 +140,6 @@ class Character{
       else if(move_directionY!=Direction.STAY)movingY-=speed;
       if(move_directionY==Direction.UP)Y-=speed;
       if(move_directionY==Direction.DOWN)Y+=speed;
-    }    
+    }
   }
 }

@@ -10,7 +10,5 @@ class Config{
     text(player.aboutY(),x,y+40);
     text(player.X,x,y+50);
     text(player.Y,x,y+60); 
-    text(npc_co.chipX(),x,y+70);
-    text(npc_co.chipY(),x,y+80);
   }
 }
