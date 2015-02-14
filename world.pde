@@ -7,16 +7,15 @@ class World{
     can_move=true;
   }
   void draw(){
-  if(can_move){
+    npc.yellow();
     player.update();
     npc.update();
-  }
-  maps.Draw_back();
-  player.draw();
-  npc.draw();
-  maps.Draw_front();
-  config.debug();
-  player.talk();
+    maps.Draw_back();
+    player.draw();
+    npc.draw();
+    maps.Draw_front();
+    config.debug();
+    player.talk();
   }
   void stop(){
     can_move=false;

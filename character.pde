@@ -45,7 +45,8 @@ class Character{
       case UP:
       if(move_directionY==Direction.STAY
       && maps.here(aboutX(),aboutY()-1)
-      && !npc.here(aboutX(),aboutY()-1)){
+      && !npc.here(aboutX(),aboutY()-1)
+      ){
         move_directionY=Direction.UP;
         direction=Direction.UP;
       }
@@ -53,7 +54,8 @@ class Character{
       case DOWN:
       if(move_directionY==Direction.STAY
       && maps.here(aboutX(),aboutY()+1)
-      && !npc.here(aboutX(),aboutY()+1)){
+      && !npc.here(aboutX(),aboutY()+1)
+      ){
         move_directionY=Direction.DOWN;
         direction=Direction.DOWN;
       }
@@ -61,7 +63,8 @@ class Character{
       case LEFT:
       if(move_directionX==Direction.STAY
       && maps.here(aboutX()-1,aboutY())
-      && !npc.here(aboutX()-1,aboutY())){
+      && !npc.here(aboutX()-1,aboutY())
+      ){
         move_directionX=Direction.LEFT;
         direction=Direction.LEFT;
       }
@@ -69,7 +72,8 @@ class Character{
       case RIGHT:
       if(move_directionX==Direction.STAY
       && maps.here(aboutX()+1,aboutY())
-      && !npc.here(aboutX()+1,aboutY())){
+      && !npc.here(aboutX()+1,aboutY())
+      ){
         move_directionX=Direction.RIGHT;
         direction=Direction.RIGHT;
       }
