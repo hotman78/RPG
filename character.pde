@@ -43,18 +43,60 @@ class Character{
   void move(Direction a){
     switch(a){
       case UP:
-      if(move_directionY==Direction.STAY
+      if(move_directionX==Direction.STAY
+      && move_directionY==Direction.STAY
       && maps.here(aboutX(),aboutY()-1)
       && !npc.here(aboutX(),aboutY()-1)
       ){
         move_directionY=Direction.UP;
         direction=Direction.UP;
       }
+      else if(move_directionX==Direction.LEFT
+      && move_directionY==Direction.STAY
+      && maps.here(aboutX(),aboutY()-1)
+      && !npc.here(aboutX(),aboutY()-1)
+      && maps.here(aboutX()-1,aboutY()-1)
+      && !npc.here(aboutX()-1,aboutY()-1)      
+      ){
+        move_directionY=Direction.UP;
+        direction=Direction.UP;
+      }
+      else if(move_directionX==Direction.RIGHT
+      && move_directionY==Direction.STAY
+      && maps.here(aboutX(),aboutY()-1)
+      && !npc.here(aboutX(),aboutY()-1)
+      && maps.here(aboutX()+1,aboutY()-1)
+      && !npc.here(aboutX()+1,aboutY()-1)      
+      ){
+        move_directionY=Direction.UP;
+        direction=Direction.UP;
+      }
       break;
       case DOWN:
-      if(move_directionY==Direction.STAY
+      if(move_directionX==Direction.STAY
+      && move_directionY==Direction.STAY
       && maps.here(aboutX(),aboutY()+1)
       && !npc.here(aboutX(),aboutY()+1)
+      ){
+        move_directionY=Direction.DOWN;
+        direction=Direction.DOWN;
+      }
+      else if(move_directionX==Direction.LEFT
+      && move_directionY==Direction.STAY
+      && maps.here(aboutX(),aboutY()+1)
+      && !npc.here(aboutX(),aboutY()+1)
+      && maps.here(aboutX()-1,aboutY()+1)
+      && !npc.here(aboutX()-1,aboutY()+1)      
+      ){
+        move_directionY=Direction.DOWN;
+        direction=Direction.DOWN;
+      }
+      else if(move_directionX==Direction.RIGHT
+      && move_directionY==Direction.STAY
+      && maps.here(aboutX(),aboutY()+1)
+      && !npc.here(aboutX(),aboutY()+1)
+      && maps.here(aboutX()+1,aboutY()+1)
+      && !npc.here(aboutX()+1,aboutY()+1)      
       ){
         move_directionY=Direction.DOWN;
         direction=Direction.DOWN;
@@ -62,8 +104,29 @@ class Character{
       break;
       case LEFT:
       if(move_directionX==Direction.STAY
+      && move_directionY==Direction.STAY
       && maps.here(aboutX()-1,aboutY())
       && !npc.here(aboutX()-1,aboutY())
+      ){
+        move_directionX=Direction.LEFT;
+        direction=Direction.LEFT;
+      }
+      else if(move_directionX==Direction.STAY
+      && move_directionY==Direction.UP
+      && maps.here(aboutX()-1,aboutY())
+      && !npc.here(aboutX()-1,aboutY())
+      && maps.here(aboutX()-1,aboutY()-1)
+      && !npc.here(aboutX()-1,aboutY()-1)
+      ){
+        move_directionX=Direction.LEFT;
+        direction=Direction.LEFT;
+      }
+      else if(move_directionX==Direction.STAY
+      && move_directionY==Direction.DOWN
+      && maps.here(aboutX()-1,aboutY())
+      && !npc.here(aboutX()-1,aboutY())
+      && maps.here(aboutX()-1,aboutY()+1)
+      && !npc.here(aboutX()-1,aboutY()+1)
       ){
         move_directionX=Direction.LEFT;
         direction=Direction.LEFT;
@@ -71,8 +134,29 @@ class Character{
       break;
       case RIGHT:
       if(move_directionX==Direction.STAY
+      && move_directionY==Direction.STAY
       && maps.here(aboutX()+1,aboutY())
       && !npc.here(aboutX()+1,aboutY())
+      ){
+        move_directionX=Direction.RIGHT;
+        direction=Direction.RIGHT;
+      }
+      else if(move_directionX==Direction.STAY
+      && move_directionY==Direction.UP
+      && maps.here(aboutX()+1,aboutY())
+      && !npc.here(aboutX()+1,aboutY())
+      && maps.here(aboutX()+1,aboutY()-1)
+      && !npc.here(aboutX()+1,aboutY()-1)
+      ){
+        move_directionX=Direction.RIGHT;
+        direction=Direction.RIGHT;
+      }
+      else if(move_directionX==Direction.STAY
+      && move_directionY==Direction.DOWN
+      && maps.here(aboutX()+1,aboutY())
+      && !npc.here(aboutX()+1,aboutY())
+      && maps.here(aboutX()+1,aboutY()+1)
+      && !npc.here(aboutX()+1,aboutY()+1)
       ){
         move_directionX=Direction.RIGHT;
         direction=Direction.RIGHT;

@@ -1,10 +1,5 @@
 class Key{
-    boolean up;
-    boolean down;
-    boolean right;
-    boolean left;
-    boolean shift;
-    boolean enter;
+    boolean up,down,right,left,shift,enter;
     Key(){
       up=false;
       down=false;

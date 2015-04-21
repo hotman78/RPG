@@ -8,6 +8,7 @@ class NPC{
       for (int i = 0 ; i < npcs.size() ; i++){
         NPCs npc_list = (NPCs)npcs.get(i);
         npc_list.update();
+        npc_list.talk();
       }
     }
   }
@@ -28,7 +29,7 @@ void draw(){
   void yellow(){
     NPCs yellow =new NPCs();
     npcs.add(yellow);
-    yellow.set(10,10,1,WALK.random);
+    yellow.set(15,15,1,WALK.stay);
   }
 }
 
@@ -40,12 +41,10 @@ class NPCs extends Character{
     set_position(X,Y);
     move_option(move_option);
   }
-}
-/*  void talk(){
-    switch(talk_flag){
-      case 1:
-      world.stop();
-      case 2:window
-      case 3:
+  void talk(){
+    while(true){
+      if(keyPressed)println("aa");
+      break;
     }
-  }*/
+  }
+}

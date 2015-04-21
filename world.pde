@@ -3,11 +3,13 @@ class World{
   int mapsizeY=30;
   int mapchipsize = 16;
   boolean can_move;
+  int time;
   World(){
     can_move=true;
   }
   void draw(){
-    npc.yellow();
+    time++;
+    if(time==1)npc.yellow();
     player.update();
     npc.update();
     maps.Draw_back();
