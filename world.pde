@@ -1,3 +1,5 @@
+//一番大まかな所を扱っているクラスです。SETUPやDRAWを呼んでます。
+
 class World{
   int mapsizeX=30;
   int mapsizeY=30;

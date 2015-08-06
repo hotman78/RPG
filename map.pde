@@ -1,4 +1,5 @@
 class Maps{
+  //マップを設定させます。今のところ1面しかないです
   PImage map1,map2;
   PImage hash;
   Maps(){
@@ -18,7 +19,8 @@ class Maps{
      return hash.pixels[(Y-1)*hash.width+(X-1)];
      else return color(0);
   }
+  //障害物の有無を判定します。あったらtrueなかったらfalseです
   boolean here(int X,int Y){
-    return (maps.hash(X,Y)!=color(0));
+    return (maps.hash(X,Y)== color(0));
   }
 }

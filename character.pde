@@ -1,5 +1,6 @@
 class Character{
   PImage down,up,left,right;
+  PImage MessageBox;
   int X;int Y;
   int aboutX;int aboutY;
   float speed;
@@ -9,9 +10,19 @@ class Character{
   int movingX;
   int movingY;
   int talk_flag;
-  void talk(){};
+  
+  //小クラスにおいてキャラクター毎に設定していきます。
+  HashMap<String,Integer> flag = new HashMap<String,Integer>();
+  //HashMap<String,int> map = new HashMap<String,int>();
+  
+  //キャラクターが特定座標にいるか否かを返します
   boolean here(int x,int y){return (x==this.aboutX() && y==this.aboutY());}
   
+  Character(){
+    MessageBox=loadImage("MessageBox.png");
+  }
+  
+  //歩き方を設定しています　key_move,random_walk,stayがあります。
   void move_option(WALK par){
     switch(par){
       case key_walk: move_option=WALK.key_walk;break;
@@ -40,12 +51,14 @@ class Character{
   boolean col(Direction dir,int y,int x){
     return dir==Direction.STAY && maps.here(x,y);
   }
-  void move(Direction a){
-    switch(a){
+  
+  //キャラクターの上下左右への動きを制御しています。長いです^^;
+  void move(Direction muki){
+    switch(muki){
       case UP:
       if(move_directionX==Direction.STAY
       && move_directionY==Direction.STAY
-      && maps.here(aboutX(),aboutY()-1)
+      && !maps.here(aboutX(),aboutY()-1)
       && !npc.here(aboutX(),aboutY()-1)
       ){
         move_directionY=Direction.UP;
@@ -53,9 +66,9 @@ class Character{
       }
       else if(move_directionX==Direction.LEFT
       && move_directionY==Direction.STAY
-      && maps.here(aboutX(),aboutY()-1)
+      && !maps.here(aboutX(),aboutY()-1)
       && !npc.here(aboutX(),aboutY()-1)
-      && maps.here(aboutX()-1,aboutY()-1)
+      && !maps.here(aboutX()-1,aboutY()-1)
       && !npc.here(aboutX()-1,aboutY()-1)      
       ){
         move_directionY=Direction.UP;
@@ -63,9 +76,9 @@ class Character{
       }
       else if(move_directionX==Direction.RIGHT
       && move_directionY==Direction.STAY
-      && maps.here(aboutX(),aboutY()-1)
+      && !maps.here(aboutX(),aboutY()-1)
       && !npc.here(aboutX(),aboutY()-1)
-      && maps.here(aboutX()+1,aboutY()-1)
+      && !maps.here(aboutX()+1,aboutY()-1)
       && !npc.here(aboutX()+1,aboutY()-1)      
       ){
         move_directionY=Direction.UP;
@@ -75,7 +88,7 @@ class Character{
       case DOWN:
       if(move_directionX==Direction.STAY
       && move_directionY==Direction.STAY
-      && maps.here(aboutX(),aboutY()+1)
+      && !maps.here(aboutX(),aboutY()+1)
       && !npc.here(aboutX(),aboutY()+1)
       ){
         move_directionY=Direction.DOWN;
@@ -83,9 +96,9 @@ class Character{
       }
       else if(move_directionX==Direction.LEFT
       && move_directionY==Direction.STAY
-      && maps.here(aboutX(),aboutY()+1)
+      && !maps.here(aboutX(),aboutY()+1)
       && !npc.here(aboutX(),aboutY()+1)
-      && maps.here(aboutX()-1,aboutY()+1)
+      && !maps.here(aboutX()-1,aboutY()+1)
       && !npc.here(aboutX()-1,aboutY()+1)      
       ){
         move_directionY=Direction.DOWN;
@@ -93,9 +106,9 @@ class Character{
       }
       else if(move_directionX==Direction.RIGHT
       && move_directionY==Direction.STAY
-      && maps.here(aboutX(),aboutY()+1)
+      && !maps.here(aboutX(),aboutY()+1)
       && !npc.here(aboutX(),aboutY()+1)
-      && maps.here(aboutX()+1,aboutY()+1)
+      && !maps.here(aboutX()+1,aboutY()+1)
       && !npc.here(aboutX()+1,aboutY()+1)      
       ){
         move_directionY=Direction.DOWN;
@@ -105,7 +118,7 @@ class Character{
       case LEFT:
       if(move_directionX==Direction.STAY
       && move_directionY==Direction.STAY
-      && maps.here(aboutX()-1,aboutY())
+      && !maps.here(aboutX()-1,aboutY())
       && !npc.here(aboutX()-1,aboutY())
       ){
         move_directionX=Direction.LEFT;
@@ -113,9 +126,9 @@ class Character{
       }
       else if(move_directionX==Direction.STAY
       && move_directionY==Direction.UP
-      && maps.here(aboutX()-1,aboutY())
+      && !maps.here(aboutX()-1,aboutY())
       && !npc.here(aboutX()-1,aboutY())
-      && maps.here(aboutX()-1,aboutY()-1)
+      && !maps.here(aboutX()-1,aboutY()-1)
       && !npc.here(aboutX()-1,aboutY()-1)
       ){
         move_directionX=Direction.LEFT;
@@ -125,7 +138,7 @@ class Character{
       && move_directionY==Direction.DOWN
       && maps.here(aboutX()-1,aboutY())
       && !npc.here(aboutX()-1,aboutY())
-      && maps.here(aboutX()-1,aboutY()+1)
+      && !maps.here(aboutX()-1,aboutY()+1)
       && !npc.here(aboutX()-1,aboutY()+1)
       ){
         move_directionX=Direction.LEFT;
@@ -135,7 +148,7 @@ class Character{
       case RIGHT:
       if(move_directionX==Direction.STAY
       && move_directionY==Direction.STAY
-      && maps.here(aboutX()+1,aboutY())
+      && !maps.here(aboutX()+1,aboutY())
       && !npc.here(aboutX()+1,aboutY())
       ){
         move_directionX=Direction.RIGHT;
@@ -143,9 +156,9 @@ class Character{
       }
       else if(move_directionX==Direction.STAY
       && move_directionY==Direction.UP
-      && maps.here(aboutX()+1,aboutY())
+      && !maps.here(aboutX()+1,aboutY())
       && !npc.here(aboutX()+1,aboutY())
-      && maps.here(aboutX()+1,aboutY()-1)
+      && !maps.here(aboutX()+1,aboutY()-1)
       && !npc.here(aboutX()+1,aboutY()-1)
       ){
         move_directionX=Direction.RIGHT;
@@ -153,9 +166,9 @@ class Character{
       }
       else if(move_directionX==Direction.STAY
       && move_directionY==Direction.DOWN
-      && maps.here(aboutX()+1,aboutY())
+      && !maps.here(aboutX()+1,aboutY())
       && !npc.here(aboutX()+1,aboutY())
-      && maps.here(aboutX()+1,aboutY()+1)
+      && !maps.here(aboutX()+1,aboutY()+1)
       && !npc.here(aboutX()+1,aboutY()+1)
       ){
         move_directionX=Direction.RIGHT;
@@ -164,6 +177,8 @@ class Character{
       break;
     }
   }
+  
+  //キャラクターのパラメータを設定させます。NPCsのsetやPlayerのコンストラクタから呼ばれます。
   void speed(float speed_replace){
     speed=speed_replace;
   }
@@ -177,6 +192,8 @@ class Character{
     left =loadImage(file_name+"_left.png");
     right =loadImage(file_name+"_right.png"); 
   }
+  
+  //キャラクターを描画します。
   void draw(){
     switch(direction){
       case UP:image(up,X,Y);break;
@@ -185,6 +202,7 @@ class Character{
       case RIGHT:image(right,X,Y);break;
     }
   }
+  //キャラクターの位置です。chipX,Yは小数点込み、aboutX,Yは切り捨てて表示されます
   float chipX(){
     return X/world.mapchipsize+1;
   }
@@ -197,6 +215,8 @@ class Character{
   int aboutY(){
     return floor(Y/world.mapchipsize)+1;
   }
+  
+  //設定です。NPCsではNPCのパラメータを設定してます。
   void set(){
     this.move_directionX=Direction.STAY;
     this.move_directionY=Direction.STAY;
@@ -204,6 +224,8 @@ class Character{
     this.movingX=world.mapchipsize;
     this.movingY=world.mapchipsize;
   }
+  
+  //キャラクターを動かします。
   void update(){
     switch(move_option){
       case key_walk:key_move();break;
