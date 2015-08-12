@@ -1,1 +1,12 @@
-<?xml version="1.0" encoding="Shift_JIS" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<UDB>
+	<elements id="0" name="アイテム">
+		<!--アイテムの設定をします-->
+		
+		<element id="0" data="薬草"/>
+		
+		<element id="1" data="木の棒"/>
+	
+	</elements>
+</UDB>

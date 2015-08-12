@@ -1,15 +1,60 @@
 class Character{
   PImage down,up,left,right;
-  PImage MessageBox;
   int X;int Y;
   int aboutX;int aboutY;
   float speed;
   WALK move_option;
-  Direction move_directionX,move_directionY;
   Direction direction;
-  int movingX;
-  int movingY;
-  int talk_flag;
+  int toX=0,toY=0;
+  int fromX,fromY;
+  int DBid;
+  void move(Direction muki){
+    switch(muki){
+      case UP:if(toY!=-1 && !maps.here(fromX+toX,fromY+toY-1,"all")){toY--;break;}
+      case DOWN:if(toY!=1 && !maps.here(fromX+toX,fromY+toY+1,"all")){toY++;break;}
+      case LEFT:if(toX!=-1 && !maps.here(fromX+toX-1,fromY+toY,"all")){toX--;break;}
+      case RIGHT:if(toX!=1 && !maps.here(fromX+toX+1,fromY+toY,"all")){toX++;break;}
+    }
+  }
+  //キャラクターを動かします。
+  void update(){
+    //並列実行,接触実行するイベントを呼び出します
+    command.parallelEvent((Events)this,this.DBid);
+    switch(move_option){
+      case key_walk:key_move();break;
+      case random:random_walk();break;
+      case stay:break;
+      default:break;
+    }
+    //Xをうごかします
+    float x=this.chipX();
+   //Yをうごかします
+   if((chipX()-fromX)>toX){
+      if(speed>fromX+toX-X)X-=speed;
+      else X=(fromX+toX)*world.mapchipsize;
+    }
+    if((chipX()-fromX)<toX){
+      if(speed>fromX+toX-X)X+=speed;
+      else X=(fromX+toX)*world.mapchipsize;
+    }
+    if((chipX()-fromX)==toX){
+      fromX=toX+fromX;
+      toY=0;
+    }
+    //Yをうごかします
+    if((chipY()-fromY)>toY){
+      if(speed>fromY+toY-Y)Y-=speed;
+      else Y=(fromY+toY)*world.mapchipsize;
+    }
+    if((chipY()-fromY)<toY){
+      if(speed>fromY+toY-Y)Y+=speed;
+      else Y=(fromY+toY)*world.mapchipsize;
+    }
+    if((chipY()-fromY)==toY){
+      fromY=toY+fromY;
+      toY=0;
+    }
+  }
   
   //小クラスにおいてキャラクター毎に設定していきます。
   HashMap<String,Integer> flag = new HashMap<String,Integer>();
@@ -17,10 +62,6 @@ class Character{
   
   //キャラクターが特定座標にいるか否かを返します
   boolean here(int x,int y){return (x==this.aboutX() && y==this.aboutY());}
-  
-  Character(){
-    MessageBox=loadImage("MessageBox.png");
-  }
   
   //歩き方を設定しています　key_move,random_walk,stayがあります。
   void move_option(WALK par){
@@ -38,153 +79,39 @@ class Character{
     if(key.right)move(Direction.RIGHT);
   }
   void random_walk(){
-    if(move_directionX==Direction.STAY && move_directionY==Direction.STAY){
+    if(toX==0 && toY==0){
       int i =floor(random(0,5));
       switch(i){
+        case 0:move(Direction.UP);break;
         case 1:move(Direction.UP);break;
         case 2:move(Direction.DOWN);break;
         case 3:move(Direction.LEFT);break;
         case 4:move(Direction.RIGHT);break;
+        case 5:move(Direction.RIGHT);break;
       }
     }
   }
   boolean col(Direction dir,int y,int x){
-    return dir==Direction.STAY && maps.here(x,y);
+    return dir==Direction.STAY && maps.here(x,y,"map");
   }
   
-  //キャラクターの上下左右への動きを制御しています。長いです^^;
-  void move(Direction muki){
-    switch(muki){
-      case UP:
-      if(move_directionX==Direction.STAY
-      && move_directionY==Direction.STAY
-      && !maps.here(aboutX(),aboutY()-1)
-      && !npc.here(aboutX(),aboutY()-1)
-      ){
-        move_directionY=Direction.UP;
-        direction=Direction.UP;
-      }
-      else if(move_directionX==Direction.LEFT
-      && move_directionY==Direction.STAY
-      && !maps.here(aboutX(),aboutY()-1)
-      && !npc.here(aboutX(),aboutY()-1)
-      && !maps.here(aboutX()-1,aboutY()-1)
-      && !npc.here(aboutX()-1,aboutY()-1)      
-      ){
-        move_directionY=Direction.UP;
-        direction=Direction.UP;
-      }
-      else if(move_directionX==Direction.RIGHT
-      && move_directionY==Direction.STAY
-      && !maps.here(aboutX(),aboutY()-1)
-      && !npc.here(aboutX(),aboutY()-1)
-      && !maps.here(aboutX()+1,aboutY()-1)
-      && !npc.here(aboutX()+1,aboutY()-1)      
-      ){
-        move_directionY=Direction.UP;
-        direction=Direction.UP;
-      }
-      break;
-      case DOWN:
-      if(move_directionX==Direction.STAY
-      && move_directionY==Direction.STAY
-      && !maps.here(aboutX(),aboutY()+1)
-      && !npc.here(aboutX(),aboutY()+1)
-      ){
-        move_directionY=Direction.DOWN;
-        direction=Direction.DOWN;
-      }
-      else if(move_directionX==Direction.LEFT
-      && move_directionY==Direction.STAY
-      && !maps.here(aboutX(),aboutY()+1)
-      && !npc.here(aboutX(),aboutY()+1)
-      && !maps.here(aboutX()-1,aboutY()+1)
-      && !npc.here(aboutX()-1,aboutY()+1)      
-      ){
-        move_directionY=Direction.DOWN;
-        direction=Direction.DOWN;
-      }
-      else if(move_directionX==Direction.RIGHT
-      && move_directionY==Direction.STAY
-      && !maps.here(aboutX(),aboutY()+1)
-      && !npc.here(aboutX(),aboutY()+1)
-      && !maps.here(aboutX()+1,aboutY()+1)
-      && !npc.here(aboutX()+1,aboutY()+1)      
-      ){
-        move_directionY=Direction.DOWN;
-        direction=Direction.DOWN;
-      }
-      break;
-      case LEFT:
-      if(move_directionX==Direction.STAY
-      && move_directionY==Direction.STAY
-      && !maps.here(aboutX()-1,aboutY())
-      && !npc.here(aboutX()-1,aboutY())
-      ){
-        move_directionX=Direction.LEFT;
-        direction=Direction.LEFT;
-      }
-      else if(move_directionX==Direction.STAY
-      && move_directionY==Direction.UP
-      && !maps.here(aboutX()-1,aboutY())
-      && !npc.here(aboutX()-1,aboutY())
-      && !maps.here(aboutX()-1,aboutY()-1)
-      && !npc.here(aboutX()-1,aboutY()-1)
-      ){
-        move_directionX=Direction.LEFT;
-        direction=Direction.LEFT;
-      }
-      else if(move_directionX==Direction.STAY
-      && move_directionY==Direction.DOWN
-      && maps.here(aboutX()-1,aboutY())
-      && !npc.here(aboutX()-1,aboutY())
-      && !maps.here(aboutX()-1,aboutY()+1)
-      && !npc.here(aboutX()-1,aboutY()+1)
-      ){
-        move_directionX=Direction.LEFT;
-        direction=Direction.LEFT;
-      }
-      break;
-      case RIGHT:
-      if(move_directionX==Direction.STAY
-      && move_directionY==Direction.STAY
-      && !maps.here(aboutX()+1,aboutY())
-      && !npc.here(aboutX()+1,aboutY())
-      ){
-        move_directionX=Direction.RIGHT;
-        direction=Direction.RIGHT;
-      }
-      else if(move_directionX==Direction.STAY
-      && move_directionY==Direction.UP
-      && !maps.here(aboutX()+1,aboutY())
-      && !npc.here(aboutX()+1,aboutY())
-      && !maps.here(aboutX()+1,aboutY()-1)
-      && !npc.here(aboutX()+1,aboutY()-1)
-      ){
-        move_directionX=Direction.RIGHT;
-        direction=Direction.RIGHT;
-      }
-      else if(move_directionX==Direction.STAY
-      && move_directionY==Direction.DOWN
-      && !maps.here(aboutX()+1,aboutY())
-      && !npc.here(aboutX()+1,aboutY())
-      && !maps.here(aboutX()+1,aboutY()+1)
-      && !npc.here(aboutX()+1,aboutY()+1)
-      ){
-        move_directionX=Direction.RIGHT;
-        direction=Direction.RIGHT;
-      }
-      break;
-    }
-  }
-  
+  /*-------------------------------------------------
+  キャラクターの上下左右への動きを制御しています。長いです^^;
+  また動く際に接触イベントが発生します
+  変数紹介
+  muki:渡された変数で向かいたいたい向きを表します。
+  dx:上下方向で今現在どの方向に動いてるのかを現します
+  dy:左右方向で今現在どの方向に動いてるのかを現します
+  copyDxDy:dx,dyをコピーしておいてあたり判定において移動不可能となった場合にdxに戻します
+  イベントにぶつかった場合接触イベントの後ブレイクされます
+  -------------------------------------------------*/
   //キャラクターのパラメータを設定させます。NPCsのsetやPlayerのコンストラクタから呼ばれます。
   void speed(float speed_replace){
     speed=speed_replace;
   }
   void set_position(int set_X,int set_Y){
-    X=set_X*world.mapchipsize;
-    Y=set_Y*world.mapchipsize;
+    X=(set_X-1)*world.mapchipsize;
+    Y=(set_Y-1)*world.mapchipsize;
   }
   void load_image(String file_name){
     down =loadImage(file_name+"_down.png");
@@ -218,38 +145,12 @@ class Character{
   
   //設定です。NPCsではNPCのパラメータを設定してます。
   void set(){
-    this.move_directionX=Direction.STAY;
-    this.move_directionY=Direction.STAY;
+    this.fromX=int(chipX());
+    println(fromX);
+    println(chipX());
+    println(chipY());
+    this.fromY=int(chipY());
+    println(fromY);
     this.direction=Direction.UP;
-    this.movingX=world.mapchipsize;
-    this.movingY=world.mapchipsize;
-  }
-  
-  //キャラクターを動かします。
-  void update(){
-    switch(move_option){
-      case key_walk:key_move();break;
-      case random:random_walk();break;
-      case stay:break;
-      default:break;
-    }
-    if(movingX==0){
-      movingX=world.mapchipsize;
-      move_directionX=Direction.STAY;
-    }else{
-      if(move_directionX!=Direction.STAY && movingX<speed)movingX=0;
-      else if(move_directionX!=Direction.STAY)movingX-=speed;
-      if(move_directionX==Direction.LEFT)X-=speed;
-      if(move_directionX==Direction.RIGHT)X+=speed;
-    }
-    if(movingY==0){
-      movingY=world.mapchipsize;
-      move_directionY=Direction.STAY;
-    }else{
-      if(move_directionY!=Direction.STAY && movingY<speed)movingY=0;
-      else if(move_directionY!=Direction.STAY)movingY-=speed;
-      if(move_directionY==Direction.UP)Y-=speed;
-      if(move_directionY==Direction.DOWN)Y+=speed;
-    }
   }
 }

@@ -14,20 +14,23 @@ Gui      :未実装です
 Key key;
 World world;
 Maps maps;
+ArrayList<Events> events;
+Event event;
 Player player;
-NPC npc;
 DB db;
-ArrayList<NPCs> npcs;
+Command command;
 Config config;
+
 void setup(){
   size(480, 480);
   key=new Key();
   world=new World();
   maps=new Maps();
+  events = new ArrayList<Events>();
+  event =new Event();
   player=new Player();
-  npc=new NPC();
   db =new DB();
-  npcs = new ArrayList<NPCs>();
+  command = new Command();
   config=new Config();
 }
 
