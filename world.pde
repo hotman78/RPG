@@ -12,9 +12,9 @@ class World{
   void draw(){
     time++;
     if(time==1)maps.addEVENT();
-    maps.update();
     maps.draw();
     config.debug();
+    maps.update();
   }
   void stop(){
     canMove=false;

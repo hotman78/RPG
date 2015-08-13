@@ -10,29 +10,45 @@ class Command{
   XML CDB = loadXML("CDB.xml");
   XML SDB = loadXML("SDB.xml");
   XML MAPs = loadXML("MAPs.xml");
+  boolean disp=false;
+  String dispContents="";
   Events playerEvent=player.player;
   Command(){
     MessageBox=loadImage("MessageBox.png");
   }
   
-  void doCommand(Events performer,int DBid,String option){
-    XML xml;
-    if(option=="parallel")xml=MAPs.getChild("草原").getChildren("EVENT")[DBid].getChild("parallel");
-    if(option=="enter")xml=MAPs.getChild("草原").getChildren("EVENT")[DBid].getChild("enter");
+  void doCommand(Events performer,String option){
+    XML xml=null;
+    if(option=="parallel")xml=MAPs.getChild("草原").getChildren("EVENT")[performer.DBid].getChild("parallel");
+    if(option=="enter")xml=MAPs.getChild("草原").getChildren("EVENT")[performer.DBid].getChild("enter");
+    if(option=="playerConntact")xml=MAPs.getChild("草原").getChildren("EVENT")[performer.DBid].getChild("playerConntact");
+    for(int i=0;i<xml.getChildren().length;i++){
+    if(xml.listChildren()[i]=="messageWindow"){messageWindow(xml.getChildren()[i].getContent());}
+    }
   }
   //接触イベントを呼び出します
-  void conntactEvent(Events performer){
-    //if(object==playerEvent)doCommand(performer,performer.DBid,"playerEvent");
+  void conntactEvent(Events performer,Events object){
+    if(object==playerEvent)doCommand(performer,"playerConntact");
   }
   //並列イベントとエンターイベントを呼び出します
-  void parallelEvent(Events performer,int DBid){
-    doCommand(performer,DBid,"parallel");
-    if(!key.enter)return;
-    switch(performer.direction){
-      case UP:if(playerEvent.aboutX==performer.aboutX && playerEvent.aboutY==performer.aboutY-1){doCommand(performer,DBid,"enter");break;}
-      case DOWN:if(playerEvent.aboutX==performer.aboutX && playerEvent.aboutY==performer.aboutY-1){doCommand(performer,DBid,"enter");break;}
-      case LEFT:if(playerEvent.aboutX==performer.aboutX && playerEvent.aboutY==performer.aboutY-1){doCommand(performer,DBid,"enter");break;}
-      case RIGHT:if(playerEvent.aboutX==performer.aboutX && playerEvent.aboutY==performer.aboutY-1){doCommand(performer,DBid,"enter");break;}
+  void parallelEvent(Events performer){
+    doCommand(performer,"parallel");
+  }
+  void enterEvent(){
+    Events performer;
+    switch(playerEvent.direction){
+      case UP:
+      performer=maps.eventSearch(playerEvent.aboutX(),playerEvent.aboutY()-1);
+      if(performer!=null)doCommand(performer,"enter");break;
+      case DOWN:
+      performer=maps.eventSearch(playerEvent.aboutX(),playerEvent.aboutY()+1);
+      if(performer!=null)doCommand(performer,"enter");break;
+      case LEFT:
+      performer=maps.eventSearch(playerEvent.aboutX()-1,playerEvent.aboutY());
+      if(performer!=null)doCommand(performer,"enter");break;
+      case RIGHT:
+      performer=maps.eventSearch(playerEvent.aboutX()+1,playerEvent.aboutY());
+      if(performer!=null)doCommand(performer,"enter");break;
     }
   }
   void sound(){
@@ -94,9 +110,13 @@ class Command{
   }
   //メッセージウィンドウを表示します
   void messageWindow(String TalkingContents){
-    while(key.enter){
-      image(MessageBox,0,height*3/4,width, height*1/4);
-      text(TalkingContents,0+50,height*3/4+50);
-    }
+    disp=!disp;
+    dispContents=TalkingContents;
+    
+  }
+  void dispWindow(){
+    if(!disp)return;
+    image(MessageBox,0,height*3/4,width, height*1/4);
+    text(dispContents,0+50,height*3/4+50);    
   }
 }

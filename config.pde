@@ -11,8 +11,6 @@ class Config{
    text(player.player.Y,x,y+40);
     text(player.player.fromX,x,y+50);
     text(player.player.fromY,x,y+60);
-    ellipse(player.player.toX,player.player.toY,10,10);
-    if(maps.eventSearch(15,15)!=null)text(maps.eventSearch(15,15).DBid,x,y+70);
-    else text("null",x,y+70);
+    if(!world.canMove)text("aaaaaa",x,y+70);
   }
 }

@@ -10,17 +10,32 @@ class Character{
   int DBid;
   void move(Direction muki){
     switch(muki){
-      case UP:if(toY-fromY>-world.MAP_CHIP_SIZE   &&  !maps.here(aboutToX(),aboutToY()-1,"all"))toY-=world.MAP_CHIP_SIZE;break;
-      case DOWN:if(toY-fromY<+world.MAP_CHIP_SIZE &&  !maps.here(aboutToX(),aboutToY()+1,"all"))toY+=world.MAP_CHIP_SIZE;break;
-      case LEFT:if(toX-fromX>-world.MAP_CHIP_SIZE &&  !maps.here(aboutToX()-1,aboutToY(),"all"))toX-=world.MAP_CHIP_SIZE;break;
-      case RIGHT:if(toX-fromX<+world.MAP_CHIP_SIZE && !maps.here(aboutToX()+1,aboutToY(),"all"))toX+=world.MAP_CHIP_SIZE;break;
-      //maps.here(abToX()+1,abToY(),"all")
+      case UP:
+      if(toY-fromY>-world.MAP_CHIP_SIZE)direction=Direction.UP;
+      if(toY-fromY>-world.MAP_CHIP_SIZE   &&  !maps.here(aboutToX(),aboutToY()-1,"all"))toY-=world.MAP_CHIP_SIZE;
+      if(toY-fromY>-world.MAP_CHIP_SIZE   &&  !maps.here(aboutToX(),aboutToY()-1,"event"))command.conntactEvent((Events)this,maps.eventSearch(aboutToX(),aboutToY()-1));
+      break;
+      case DOWN:
+      if(toY-fromY<+world.MAP_CHIP_SIZE)direction=Direction.DOWN;
+      if(toY-fromY<+world.MAP_CHIP_SIZE &&  !maps.here(aboutToX(),aboutToY()+1,"all"))toY+=world.MAP_CHIP_SIZE;
+      if(toY-fromY<+world.MAP_CHIP_SIZE   &&  !maps.here(aboutToX(),aboutToY()+1,"event"))command.conntactEvent((Events)this,maps.eventSearch(aboutToX(),aboutToY()+1));
+      break;
+      case LEFT:
+      if(toX-fromX>-world.MAP_CHIP_SIZE)direction=Direction.LEFT;
+      if(toX-fromX>-world.MAP_CHIP_SIZE &&  !maps.here(aboutToX()-1,aboutToY(),"all"))toX-=world.MAP_CHIP_SIZE;
+      if(toX-fromX>-world.MAP_CHIP_SIZE   &&  !maps.here(aboutToX()-1,aboutToY(),"event"))command.conntactEvent((Events)this,maps.eventSearch(aboutToX()-1,aboutToY()));
+      break;
+      case RIGHT:
+      if(toX-fromX<+world.MAP_CHIP_SIZE)direction=Direction.RIGHT;
+      if(toX-fromX<+world.MAP_CHIP_SIZE && !maps.here(aboutToX()+1,aboutToY(),"all"))toX+=world.MAP_CHIP_SIZE;
+      if(toX-fromX<+world.MAP_CHIP_SIZE   &&  !maps.here(aboutToX()+1,aboutToY(),"event"))command.conntactEvent((Events)this,maps.eventSearch(aboutToX()+1,aboutToY()));
+      break;
     }
   }
   //キャラクターを動かします。
   void update(){
     //並列実行,接触実行するイベントを呼び出します
-    command.parallelEvent((Events)this,this.DBid);
+    command.parallelEvent((Events)this);
     switch(move_option){
       case key_walk:key_move();break;
       case random:random_walk();break;
@@ -33,6 +48,10 @@ class Character{
   if(Y<toY)Y++;
   if(X==toX)fromX=toX;
   if(Y==toY)fromY=toY;
+  if(toY-Y<0)direction=Direction.UP;
+  if(toY-Y>0)direction=Direction.DOWN;
+  if(toX-X<0)direction=Direction.LEFT;
+  if(toX-X>0)direction=Direction.RIGHT;
   }
   
   //小クラスにおいてキャラクター毎に設定していきます。
@@ -58,15 +77,13 @@ class Character{
     if(key.right)move(Direction.RIGHT);
   }
   void random_walk(){
-    if(toX==0 && toY==0){
+    if(toX-X==0 && toY-Y==0){
       int i =floor(random(0,5));
       switch(i){
-        case 0:move(Direction.UP);break;
         case 1:move(Direction.UP);break;
         case 2:move(Direction.DOWN);break;
         case 3:move(Direction.LEFT);break;
         case 4:move(Direction.RIGHT);break;
-        case 5:move(Direction.RIGHT);break;
       }
     }
   }
@@ -123,7 +140,6 @@ class Character{
     this.fromY=Y;
     this.toX=X;
     this.toY=Y;
-    println(fromY);
     this.direction=Direction.UP;
   }
 }

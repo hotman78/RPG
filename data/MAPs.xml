@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <MAPs>
 	<草原 id="1">
-		<EVENT X="15" Y="15" name="yellow">
-			<WALK>random</WALK>
+		<EVENT X="20" Y="3" name="yellow">
+			<WALK>stay</WALK>
 			<SPEED>1</SPEED>
 			<GAZOU>yellow</GAZOU>
 			<parallel>
@@ -13,6 +13,9 @@
 				<flagWhite option="=" Value="60">wait</flagWhite>
 				<DBwrite option="--" elements="1" element="1"></DBwrite>
 			</contact>
+			<enter>
+				<messageWindow>よう</messageWindow>
+			</enter>
 		</EVENT>
 	</草原>
 </MAPs>

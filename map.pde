@@ -1,12 +1,9 @@
 class Maps{
   //マップを設定させます。今のところ1面しかないです
-  PImage backMap,frontMap;
-  PImage hash;
+  PImage map,hash;
   Maps(){
-    backMap = loadImage("map1.png");
-    frontMap = loadImage("map2.png");
-    hash = loadImage("hash.png");
-    hash.loadPixels();
+    map = loadImage("map.png");
+    hash = loadImage("mask.png");
   }
   //ここからEVENTを読み込みます
   void addEVENT(){
@@ -15,7 +12,7 @@ class Maps{
     for(int i=0;i<MAPs.getChild("草原").getChildren("EVENT").length;i++){
       try{
         walkType=WALK.valueOf(MAPs.getChild("草原").getChildren("EVENT")[i].getChild("WALK").getContent());
-      }catch(NullPointerException e){walkType=WALK.stay;}
+      }catch(NullPointerException e){walkType=WALK.random;}
     
       int X=MAPs.getChild("草原").getChildren("EVENT")[i].getInt("X");
       int Y=MAPs.getChild("草原").getChildren("EVENT")[i].getInt("Y");
@@ -38,12 +35,12 @@ class Maps{
   }
   //描画します
   void draw(){
-    image(backMap,0,0);
+    image(map,0,0);
     for (int i = 0 ; i < events.size() ; i++){
       Events eventList = (Events)events.get(i);
       eventList.draw();
     }
-    image(frontMap,0,0);
+    command.dispWindow();
   }
     color hash(int X,int Y){
      if(X>0 && X<world.mapsizeX+1 && Y>0 && Y<world.mapsizeY+1)
