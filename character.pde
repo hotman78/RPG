@@ -5,15 +5,16 @@ class Character{
   float speed;
   WALK move_option;
   Direction direction;
-  int toX=0,toY=0;
+  int toX,toY;
   int fromX,fromY;
   int DBid;
   void move(Direction muki){
     switch(muki){
-      case UP:if(toY!=-1 && !maps.here(fromX+toX,fromY+toY-1,"all")){toY--;break;}
-      case DOWN:if(toY!=1 && !maps.here(fromX+toX,fromY+toY+1,"all")){toY++;break;}
-      case LEFT:if(toX!=-1 && !maps.here(fromX+toX-1,fromY+toY,"all")){toX--;break;}
-      case RIGHT:if(toX!=1 && !maps.here(fromX+toX+1,fromY+toY,"all")){toX++;break;}
+      case UP:if(toY-fromY>-world.MAP_CHIP_SIZE   &&  !maps.here(aboutToX(),aboutToY()-1,"all"))toY-=world.MAP_CHIP_SIZE;break;
+      case DOWN:if(toY-fromY<+world.MAP_CHIP_SIZE &&  !maps.here(aboutToX(),aboutToY()+1,"all"))toY+=world.MAP_CHIP_SIZE;break;
+      case LEFT:if(toX-fromX>-world.MAP_CHIP_SIZE &&  !maps.here(aboutToX()-1,aboutToY(),"all"))toX-=world.MAP_CHIP_SIZE;break;
+      case RIGHT:if(toX-fromX<+world.MAP_CHIP_SIZE && !maps.here(aboutToX()+1,aboutToY(),"all"))toX+=world.MAP_CHIP_SIZE;break;
+      //maps.here(abToX()+1,abToY(),"all")
     }
   }
   //キャラクターを動かします。
@@ -26,34 +27,12 @@ class Character{
       case stay:break;
       default:break;
     }
-    //Xをうごかします
-    float x=this.chipX();
-   //Yをうごかします
-   if((chipX()-fromX)>toX){
-      if(speed>fromX+toX-X)X-=speed;
-      else X=(fromX+toX)*world.mapchipsize;
-    }
-    if((chipX()-fromX)<toX){
-      if(speed>fromX+toX-X)X+=speed;
-      else X=(fromX+toX)*world.mapchipsize;
-    }
-    if((chipX()-fromX)==toX){
-      fromX=toX+fromX;
-      toY=0;
-    }
-    //Yをうごかします
-    if((chipY()-fromY)>toY){
-      if(speed>fromY+toY-Y)Y-=speed;
-      else Y=(fromY+toY)*world.mapchipsize;
-    }
-    if((chipY()-fromY)<toY){
-      if(speed>fromY+toY-Y)Y+=speed;
-      else Y=(fromY+toY)*world.mapchipsize;
-    }
-    if((chipY()-fromY)==toY){
-      fromY=toY+fromY;
-      toY=0;
-    }
+  if(toX<X)X--;
+  if(X<toX)X++;
+  if(toY<Y)Y--;
+  if(Y<toY)Y++;
+  if(X==toX)fromX=toX;
+  if(Y==toY)fromY=toY;
   }
   
   //小クラスにおいてキャラクター毎に設定していきます。
@@ -94,24 +73,14 @@ class Character{
   boolean col(Direction dir,int y,int x){
     return dir==Direction.STAY && maps.here(x,y,"map");
   }
-  
-  /*-------------------------------------------------
-  キャラクターの上下左右への動きを制御しています。長いです^^;
-  また動く際に接触イベントが発生します
-  変数紹介
-  muki:渡された変数で向かいたいたい向きを表します。
-  dx:上下方向で今現在どの方向に動いてるのかを現します
-  dy:左右方向で今現在どの方向に動いてるのかを現します
-  copyDxDy:dx,dyをコピーしておいてあたり判定において移動不可能となった場合にdxに戻します
-  イベントにぶつかった場合接触イベントの後ブレイクされます
-  -------------------------------------------------*/
+
   //キャラクターのパラメータを設定させます。NPCsのsetやPlayerのコンストラクタから呼ばれます。
   void speed(float speed_replace){
     speed=speed_replace;
   }
   void set_position(int set_X,int set_Y){
-    X=(set_X-1)*world.mapchipsize;
-    Y=(set_Y-1)*world.mapchipsize;
+    X=(set_X-1)*world.MAP_CHIP_SIZE;
+    Y=(set_Y-1)*world.MAP_CHIP_SIZE;
   }
   void load_image(String file_name){
     down =loadImage(file_name+"_down.png");
@@ -131,25 +100,29 @@ class Character{
   }
   //キャラクターの位置です。chipX,Yは小数点込み、aboutX,Yは切り捨てて表示されます
   float chipX(){
-    return X/world.mapchipsize+1;
+    return X/world.MAP_CHIP_SIZE+1;
   }
   float chipY(){
-    return Y/world.mapchipsize+1;
+    return Y/world.MAP_CHIP_SIZE+1;
   }
   int aboutX(){
-    return floor(X/world.mapchipsize)+1;
+    return floor(X/world.MAP_CHIP_SIZE)+1;
   }
   int aboutY(){
-    return floor(Y/world.mapchipsize)+1;
+    return floor(Y/world.MAP_CHIP_SIZE)+1;
   }
-  
+  int aboutToX(){
+    return floor(toX/world.MAP_CHIP_SIZE)+1;
+  }
+  int aboutToY(){
+    return floor(toY/world.MAP_CHIP_SIZE)+1;
+  }
   //設定です。NPCsではNPCのパラメータを設定してます。
   void set(){
-    this.fromX=int(chipX());
-    println(fromX);
-    println(chipX());
-    println(chipY());
-    this.fromY=int(chipY());
+    this.fromX=X;
+    this.fromY=Y;
+    this.toX=X;
+    this.toY=Y;
     println(fromY);
     this.direction=Direction.UP;
   }

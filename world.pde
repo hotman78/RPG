@@ -3,7 +3,7 @@
 class World{
   int mapsizeX=30;
   int mapsizeY=30;
-  int mapchipsize = 16;
+  int MAP_CHIP_SIZE = 16;
   boolean canMove;
   int time;
   World(){

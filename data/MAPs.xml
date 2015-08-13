@@ -2,7 +2,7 @@
 <MAPs>
 	<草原 id="1">
 		<EVENT X="15" Y="15" name="yellow">
-			<WALK>stay</WALK>
+			<WALK>random</WALK>
 			<SPEED>1</SPEED>
 			<GAZOU>yellow</GAZOU>
 			<parallel>
