@@ -14,7 +14,7 @@ class World{
     if(time==1)maps.addEVENT();
     maps.draw();
     config.debug();
-    maps.update();
+    if(canMove==true)maps.update();
   }
   void stop(){
     canMove=false;

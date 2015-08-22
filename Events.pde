@@ -1,4 +1,4 @@
-class Character{
+class Events{
   PImage down,up,left,right;
   int X;int Y;
   int aboutX;int aboutY;
@@ -135,11 +135,15 @@ class Character{
     return floor(toY/world.MAP_CHIP_SIZE)+1;
   }
   //設定です。NPCsではNPCのパラメータを設定してます。
-  void set(){
-    this.fromX=X;
-    this.fromY=Y;
-    this.toX=X;
-    this.toY=Y;
+  void set(int X,int Y,int speed,WALK move_option,String imgage_name){
+    set_position(X,Y);
+    this.fromX=this.X;
+    this.fromY=this.Y;
+    this.toX=this.X;
+    this.toY=this.Y;
     this.direction=Direction.UP;
+    load_image(imgage_name);
+    speed(speed);
+    move_option(move_option);
   }
 }
