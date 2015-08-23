@@ -8,34 +8,50 @@ class Events{
   int toX,toY;
   int fromX,fromY;
   int DBid;
+  Command command;
+  
+  Events(int X,int Y,int speed,WALK move_option,String imgage_name){
+    set_position(X,Y);
+    this.fromX=this.X;
+    this.fromY=this.Y;
+    this.toX=this.X;
+    this.toY=this.Y;
+    command = new Command(this);
+    this.direction=Direction.UP;
+    load_image(imgage_name);
+    speed(speed);
+    move_option(move_option);    
+  }
+  
   void move(Direction muki){
     switch(muki){
       case UP:
       if(toY-fromY>-world.MAP_CHIP_SIZE)direction=Direction.UP;
       if(toY-fromY>-world.MAP_CHIP_SIZE   &&  !maps.here(aboutToX(),aboutToY()-1,"all"))toY-=world.MAP_CHIP_SIZE;
-      if(toY-fromY>-world.MAP_CHIP_SIZE   &&  !maps.here(aboutToX(),aboutToY()-1,"event"))command.conntactEvent((Events)this,maps.eventSearch(aboutToX(),aboutToY()-1));
+      if(toY-fromY>-world.MAP_CHIP_SIZE   &&  !maps.here(aboutToX(),aboutToY()-1,"event"))command.conntactEvent(maps.eventSearch(aboutToX(),aboutToY()-1));
       break;
       case DOWN:
       if(toY-fromY<+world.MAP_CHIP_SIZE)direction=Direction.DOWN;
       if(toY-fromY<+world.MAP_CHIP_SIZE &&  !maps.here(aboutToX(),aboutToY()+1,"all"))toY+=world.MAP_CHIP_SIZE;
-      if(toY-fromY<+world.MAP_CHIP_SIZE   &&  !maps.here(aboutToX(),aboutToY()+1,"event"))command.conntactEvent((Events)this,maps.eventSearch(aboutToX(),aboutToY()+1));
+      if(toY-fromY<+world.MAP_CHIP_SIZE   &&  !maps.here(aboutToX(),aboutToY()+1,"event"))command.conntactEvent(maps.eventSearch(aboutToX(),aboutToY()+1));
       break;
       case LEFT:
       if(toX-fromX>-world.MAP_CHIP_SIZE)direction=Direction.LEFT;
       if(toX-fromX>-world.MAP_CHIP_SIZE &&  !maps.here(aboutToX()-1,aboutToY(),"all"))toX-=world.MAP_CHIP_SIZE;
-      if(toX-fromX>-world.MAP_CHIP_SIZE   &&  !maps.here(aboutToX()-1,aboutToY(),"event"))command.conntactEvent((Events)this,maps.eventSearch(aboutToX()-1,aboutToY()));
+      if(toX-fromX>-world.MAP_CHIP_SIZE   &&  !maps.here(aboutToX()-1,aboutToY(),"event"))command.conntactEvent(maps.eventSearch(aboutToX()-1,aboutToY()));
       break;
       case RIGHT:
       if(toX-fromX<+world.MAP_CHIP_SIZE)direction=Direction.RIGHT;
       if(toX-fromX<+world.MAP_CHIP_SIZE && !maps.here(aboutToX()+1,aboutToY(),"all"))toX+=world.MAP_CHIP_SIZE;
-      if(toX-fromX<+world.MAP_CHIP_SIZE   &&  !maps.here(aboutToX()+1,aboutToY(),"event"))command.conntactEvent((Events)this,maps.eventSearch(aboutToX()+1,aboutToY()));
+      if(toX-fromX<+world.MAP_CHIP_SIZE   &&  !maps.here(aboutToX()+1,aboutToY(),"event"))command.conntactEvent(maps.eventSearch(aboutToX()+1,aboutToY()));
       break;
     }
   }
+  
   //キャラクターを動かします。
   void update(){
     //並列実行,接触実行するイベントを呼び出します
-    command.parallelEvent((Events)this);
+    command.parallelEvent();
     switch(move_option){
       case key_walk:key_move();break;
       case random:random_walk();break;
@@ -133,17 +149,5 @@ class Events{
   }
   int aboutToY(){
     return floor(toY/world.MAP_CHIP_SIZE)+1;
-  }
-  //設定です。NPCsではNPCのパラメータを設定してます。
-  void set(int X,int Y,int speed,WALK move_option,String imgage_name){
-    set_position(X,Y);
-    this.fromX=this.X;
-    this.fromY=this.Y;
-    this.toX=this.X;
-    this.toY=this.Y;
-    this.direction=Direction.UP;
-    load_image(imgage_name);
-    speed(speed);
-    move_option(move_option);
   }
 }

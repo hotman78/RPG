@@ -18,9 +18,8 @@ class Maps{
       int Y=MAPs.getChild("草原").getChildren("EVENT")[i].getInt("Y");
       int speed=Integer.parseInt(MAPs.getChild("草原").getChildren("EVENT")[i].getChild("SPEED").getContent());
       String gazou=MAPs.getChild("草原").getChildren("EVENT")[i].getChild("GAZOU").getContent();
-      Events addedEvent =new Events();
+      Events addedEvent =new Events(X,Y,speed,walkType,gazou);
       events.add(addedEvent);
-      addedEvent.set(X,Y,speed,walkType,gazou);
       addedEvent.DBid=i;
     }
   }
@@ -40,7 +39,10 @@ class Maps{
       Events eventList = (Events)events.get(i);
       eventList.draw();
     }
-    command.dispWindow();
+      for (int i = 0 ; i < events.size() ; i++){
+        Events eventList = (Events)events.get(i);
+        eventList.command.dispWindow();
+      }
   }
     color hash(int X,int Y){
      if(X>0 && X<world.mapsizeX+1 && Y>0 && Y<world.mapsizeY+1)

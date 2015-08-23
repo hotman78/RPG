@@ -13,10 +13,8 @@ Key key;
 World world;
 Maps maps;
 ArrayList<Events> events;
-Event event;
 Player player;
 DB db;
-Command command;
 Config config;
 
 void setup(){
@@ -27,7 +25,6 @@ void setup(){
   events = new ArrayList<Events>();
   player=new Player();
   db =new DB();
-  command = new Command();
   config=new Config();
 }
 

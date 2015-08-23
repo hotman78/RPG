@@ -1,66 +1,72 @@
-  //サウンドを流せるようにします
-  import ddf.minim.*;
-  
+//サウンドを流せるようにします
+import ddf.minim.*;
+
 class Command{
   PImage MessageBox;
   String TalkingContents="null";  //要素ごとにひとつの話す内容をもたせます
   Minim minim;
   AudioPlayer audioPlayer;
+  
   XML UDB = loadXML("UDB.xml");
   XML CDB = loadXML("CDB.xml");
   XML SDB = loadXML("SDB.xml");
   XML MAPs = loadXML("MAPs.xml");
+  XML xml=null;
+  
   boolean disp=false;
-  boolean tmp=false;
   String dispContents="";
-  Events playerEvent=player.player;
-  Command(){
+  boolean doingEvent=false;
+  int commandID;
+  
+  Events performer;
+  Events playerEvent;
+  
+  Command(Events t_performer){
     MessageBox=loadImage("MessageBox.png");
+    performer=t_performer;
   }
-  ////コマンドを読み込みます
-  void readCommand(Events performer,String option){
-    XML xml=null;
+  void readCommand(){
+    
+  }
+  void doCommand(String option){
     if(option=="parallel")xml=MAPs.getChild("草原").getChildren("EVENT")[performer.DBid].getChild("parallel");
     if(option=="enter")xml=MAPs.getChild("草原").getChildren("EVENT")[performer.DBid].getChild("enter");
     if(option=="playerConntact")xml=MAPs.getChild("草原").getChildren("EVENT")[performer.DBid].getChild("playerConntact");
-    doCommand(performer,xml);
-  }
-  //コマンドを実行します
-  void doCommand(Events performer,XML xml){
-    String command;
     for(int i=0;i<xml.getChildren().length;i++){
-      command=xml.listChildren()[i];
-      if(command=="messageWindow"){messageWindow(xml.getChildren()[i].getContent());}
-      //if(command=="for"){while(true){doCommand(performer,xml.getChildren()[i]);}}
-     // if(command=="delay"){delay(int(xml.getChildren()[i].getContent());}
+    if(xml.listChildren()[i]=="messageWindow"){messageWindow(xml.getChildren()[i].getContent());}
     }
   }
+  
   //接触イベントを呼び出します
-  void conntactEvent(Events performer,Events object){
-    if(object==playerEvent)readCommand(performer,"playerConntact");
+  void conntactEvent(Events object){
+    playerEvent=player.player;
+    if(object==playerEvent)doCommand("playerConntact");
   }
-  //並列イベントを呼び出します
-  void parallelEvent(Events performer){
-    readCommand(performer,"parallel");
+  
+  //並列イベントとエンターイベントを呼び出します
+  void parallelEvent(){
+    doCommand("parallel");
   }
-  //エンターイベントを呼び出します
+  
   void enterEvent(){
+    playerEvent=player.player;
     Events performer;
     switch(playerEvent.direction){
       case UP:
       performer=maps.eventSearch(playerEvent.aboutX(),playerEvent.aboutY()-1);
-      if(performer!=null)readCommand(performer,"enter");break;
+      if(performer!=null)doCommand("enter");break;
       case DOWN:
       performer=maps.eventSearch(playerEvent.aboutX(),playerEvent.aboutY()+1);
-      if(performer!=null)readCommand(performer,"enter");break;
+      if(performer!=null)doCommand("enter");break;
       case LEFT:
       performer=maps.eventSearch(playerEvent.aboutX()-1,playerEvent.aboutY());
-      if(performer!=null)readCommand(performer,"enter");break;
+      if(performer!=null)doCommand("enter");break;
       case RIGHT:
       performer=maps.eventSearch(playerEvent.aboutX()+1,playerEvent.aboutY());
-      if(performer!=null)readCommand(performer,"enter");break;
+      if(performer!=null)doCommand("enter");break;
     }
   }
+  
   void sound(){
     minim = new Minim(this);  //初期化
     audioPlayer = minim.loadFile("bgm.mp3");  //groove.mp3をロードする
@@ -113,19 +119,19 @@ class Command{
     if(option=="-=")performer.flag.put(key,performer.flag.get(key)-value);
   }
   
+  
   //コモンイベントを読み込み、実行します
   void commonEvent(){
     
   }
   //メッセージウィンドウを表示します
   void messageWindow(String TalkingContents){
-    world.canMove=!world.canMove;
-    dispContents=TalkingContents;
     disp=!disp;
+    dispContents=TalkingContents;
   }
   void dispWindow(){
     if(!disp)return;
     image(MessageBox,0,height*3/4,width, height*1/4);
-    text(dispContents,0+50,height*3/4+50);    
+    text(dispContents,0+50,height*3/4+50);
   }
 }

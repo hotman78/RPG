@@ -14,10 +14,7 @@ class Key{
     else if(keyCode==RIGHT) right = true;
     else if(keyCode==LEFT) left = true;
     else if(keyCode==SHIFT) shift = true;
-    else if(keyCode==ENTER) {
-      enter = true;
-      
-    }
+    else if(keyCode==ENTER) enter = true;
   }
   
     
@@ -27,6 +24,12 @@ class Key{
     else if(keyCode==RIGHT) right= false;
     else if(keyCode==LEFT)  left = false;
     else if(keyCode==SHIFT) shift = false;
-    else if(keyCode==ENTER) {enter = false;command.enterEvent();}
+    else if(keyCode==ENTER) {
+      enter = false;
+      for (int i = 0 ; i < events.size() ; i++){
+        Events eventList = (Events)events.get(i);
+        eventList.command.enterEvent();
+      }
+    }
   }
 }
