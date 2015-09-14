@@ -7,11 +7,11 @@ class Events{
   private  int DBid;
   private XML MAPs = loadXML("MAPs.xml");
   private Command[] command;
-  //子クラスにおいてキャラクター毎に設定していきます。
+  //小クラスにおいてキャラクター毎に設定していきます。
   private HashMap<String,Integer> flag = new HashMap<String,Integer>();  
   Direction direction;
   int X, Y;
-  int PAGE_NUMBER;
+  
   Events(int tX, int tY, int tSpeed, WALK tMoveOption, String image_name, int DBid,int MAP_CHIP_SIZE){
     X=(tX-1)*MAP_CHIP_SIZE;
     Y=(tY-1)*MAP_CHIP_SIZE;
@@ -26,9 +26,8 @@ class Events{
     this.fromY=this.Y;
     this.toX=this.X;
     this.toY=this.Y;
-    PAGE_NUMBER=MAPs.getChild("草原").getChildren("EVENT")[this.DBid].getChildren("page").length;
-    command =new Command[PAGE_NUMBER];
-    for(int i=0;i<PAGE_NUMBER;i++){
+    command =new Command[MAPs.getChild("草原").getChildren("EVENT")[this.DBid].getChildren("page").length];
+    for(int i=0;i<MAPs.getChild("草原").getChildren("EVENT")[this.DBid].getChildren("page").length;i++){
       command[i] = new Command(this,i);
     }
   }
@@ -47,19 +46,18 @@ class Events{
   void update(){
     for(int i=0;i<MAPs.getChild("草原").getChildren("EVENT")[this.DBid].getChildren("page").length;i++){
       command[i].doCommand();
-      command[i].startCommand("parallel");
     }
-    
+    //並列実行,接触実行するイベントを呼び出します
+    //command.startCommand("parallel");
     switch(moveOption){
       case key_walk:key_move();break;
       case random:random_walk();break;
       case stay:break;
       default:break;
     }
-    
     if(toX<X)X-=speed;
     if(X<toX)X+=speed;
-    if(toY<Y)Y-=speed; //<>//
+    if(toY<Y)Y-=speed;
     if(Y<toY)Y+=speed;
     if(X==toX)fromX=toX;
     if(Y==toY)fromY=toY;
@@ -70,24 +68,28 @@ class Events{
   }  
   
   private void move(Direction muki){
-    if((toX-fromX)*muki.dx() < world.MAP_CHIP_SIZE || (toY-fromY)*muki.dy() < world.MAP_CHIP_SIZE)direction=muki;
-
-    if(((toX-fromX)*muki.dx()<world.MAP_CHIP_SIZE || (toY-fromY)*muki.dy()<world.MAP_CHIP_SIZE)
-    && !world.maps.here(aboutToX()+muki.dx(),aboutToY()+muki.dy(),"all")){
-      toX+=world.MAP_CHIP_SIZE*muki.dx();
-      toY+=world.MAP_CHIP_SIZE*muki.dy();
+    switch(muki){
+      case UP:
+      if(toY-fromY>-world.MAP_CHIP_SIZE)direction=Direction.UP;
+      if(toY-fromY>-world.MAP_CHIP_SIZE   &&  !world.maps.here(aboutToX(),aboutToY()-1,"all"))toY-=world.MAP_CHIP_SIZE;
+      //if(toY-fromY>-world.MAP_CHIP_SIZE   &&  !maps.here(aboutToX(),aboutToY()-1,"event"))command.coanntactEvent(maps.eventSearch(aboutToX(),aboutToY()-1));
+      break;
+      case DOWN:
+      if(toY-fromY<+world.MAP_CHIP_SIZE)direction=Direction.DOWN;
+      if(toY-fromY<+world.MAP_CHIP_SIZE &&  !world.maps.here(aboutToX(),aboutToY()+1,"all"))toY+=world.MAP_CHIP_SIZE;
+      //if(toY-fromY<+world.MAP_CHIP_SIZE   &&  !maps.here(aboutToX(),aboutToY()+1,"event"))command.conntactEvent(maps.eventSearch(aboutToX(),aboutToY()+1));
+      break;
+      case LEFT:
+      if(toX-fromX>-world.MAP_CHIP_SIZE)direction=Direction.LEFT;
+      if(toX-fromX>-world.MAP_CHIP_SIZE &&  !world.maps.here(aboutToX()-1,aboutToY(),"all"))toX-=world.MAP_CHIP_SIZE;
+      //if(toX-fromX>-world.MAP_CHIP_SIZE   &&  !maps.here(aboutToX()-1,aboutToY(),"event"))command.conntactEvent(maps.eventSearch(aboutToX()-1,aboutToY()));
+      break;
+      case RIGHT:
+      if(toX-fromX<+world.MAP_CHIP_SIZE)direction=Direction.RIGHT;
+      if(toX-fromX<+world.MAP_CHIP_SIZE && !world.maps.here(aboutToX()+1,aboutToY(),"all"))toX+=world.MAP_CHIP_SIZE;
+      //if(toX-fromX<+world.MAP_CHIP_SIZE   &&  !maps.here(aboutToX()+1,aboutToY(),"event"))command.conntactEvent(maps.eventSearch(aboutToX()+1,aboutToY()));
+      break;
     }
-    if(( (toX-fromX)*muki.dx() < world.MAP_CHIP_SIZE || (toY-fromY)*muki.dy() < world.MAP_CHIP_SIZE)&&  !world.maps.here(aboutToX()+muki.dx(),aboutToY()+muki.dy(),"event")){
-      for(int i=0;i<MAPs.getChild("草原").getChildren("EVENT")[this.DBid].getChildren("page").length;i++){
-        command[i].conntactEvent(world.maps.eventSearch(aboutToX()+1,aboutToY()));
-      }
-    }
-  }
-  
-  void conntactEvent(){
-    for(int i=0;i<MAPs.getChild("草原").getChildren("EVENT")[this.DBid].getChildren("page").length;i++){
-      //command[i].conntactEvent(maps.eventSearch(aboutToX()+1,aboutToY()));
-    }    
   }
   
   //キャラクターが特定座標にいるか否かを返します

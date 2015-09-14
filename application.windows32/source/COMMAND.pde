@@ -37,10 +37,14 @@ class Command{
   
   void doCommand(){
     if(!isExecuting)return;
-    if("messageWindow".equals(xml.listChildren()[commandID]) && !world.tc.inConversation){world.tc.startConversation(xml.getChildren()[commandID].getContent());}
-    if("sound".equals(xml.listChildren()[commandID])){sound(xml.getChildren()[commandID].getContent());}
+    if(xml.listChildren()[commandID]=="messageWindow" && !world.tc.inConversation){world.tc.startConversation(xml.getChildren()[commandID].getContent());}
+    if(xml.listChildren()[commandID]=="sound"){sound();}
     else if(commandID==xml.listChildren().length-1){commandID=0;isExecuting=false;}
     else {commandID++;doCommand();}
+  }
+  
+  void nextCommand(){
+    
   }
   
   //接触イベントを呼び出します
@@ -55,22 +59,13 @@ class Command{
     && performer.aboutY()==playerEvent.aboutY()+playerEvent.direction.dy()){startCommand("enter");}
   }
   
-  void sound(String URL){
-    if("stop".equals(URL)){stop();return;}
-    player = minim.loadFile(URL); //mp3ファイルを指定する 
+  void sound(){
+    player = minim.loadFile("bgm.mp3"); //mp3ファイルを指定する 
     player.play();  //再生
     player.rewind();
     commandID++;
     doCommand();
   }
-  void stop(){
-    player.close();  //サウンドデータを終了
-    minim.stop();
-    //super.stop();
-    commandID++;
-    doCommand();
-  }
-
    //変数をDBから読み込みます
   private String DBread(String DBname,int indexElements,int indexElement){
     XML DB=null;

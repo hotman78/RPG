@@ -9,23 +9,12 @@ Key      :新しいkey使いたくなったらこちらです
 DB       :DBを保存します。
 Gui      :未実装です
 --------------------------------------------------*/
-Key key;
+
 World world;
-Maps maps;
-ArrayList<Events> events;
-Player player;
-DB db;
-Config config;
 
 void setup(){
   size(480, 480);
-  key=new Key();
   world=new World();
-  maps=new Maps();
-  events = new ArrayList<Events>();
-  player=new Player();
-  db =new DB();
-  config=new Config();
 }
 
 void draw(){
@@ -33,9 +22,9 @@ void draw(){
 }
 
 void keyPressed(){
-  key.keyPressed();
+  world.key.keyPressed();
 }
 
 void keyReleased(){
-  key.keyReleased();
+  world.key.keyReleased();
 }

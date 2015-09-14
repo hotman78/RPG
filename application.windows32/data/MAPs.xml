@@ -14,7 +14,7 @@
 				<DBwrite option="--" elements="1" element="1"></DBwrite>
 			</page>
 			<page Trigger="enter">
-				<sound>bgm.mp3</sound>
+				<sound></sound>
 				<messageWindow>よう</messageWindow>
 			</page>
 		</EVENT>

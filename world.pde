@@ -6,13 +6,30 @@ class World{
   int MAP_CHIP_SIZE = 16;
   boolean canMove;
   int time;
+  
+  Key key;
+  Maps maps;
+  Player player;
+  DB db;
+  Config config;
+  TalkCommand tc;
+  
   World(){
+    key=new Key();
+    maps=new Maps();
+    db =new DB();
+    config=new Config();
+    tc =new TalkCommand();
+    player=new Player(MAP_CHIP_SIZE);
+    
     canMove=true;
   }
+  
   void draw(){
     time++;
-    if(time==1)maps.addEVENT();
+    if(time==1)maps.addEVENT(world.MAP_CHIP_SIZE);
     maps.draw();
+    tc.draw();
     config.debug();
     if(canMove==true)maps.update();
   }
