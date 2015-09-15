@@ -16,8 +16,8 @@ class Maps{
     MAPs = loadXML("MAPs.xml");
     WALK walkType;
     
-    player =new Events(15,15,16,WALK.key_walk,"player",0,MAP_CHIP_SIZE);
-    world.maps.events.add(player);
+    player =new Events(15,15,1,WALK.key_walk,"player",0,MAP_CHIP_SIZE);
+    events.add(player);
       
     for(int i=0;i<MAPs.getChild("草原").getChildren("EVENT").length;i++){
       try{
@@ -30,7 +30,6 @@ class Maps{
       String gazou=MAPs.getChild("草原").getChildren("EVENT")[i].getChild("GAZOU").getContent();
       Events addedEvent =new Events(X,Y,speed,walkType,gazou,i,MAP_CHIP_SIZE);
       events.add(addedEvent);
-      addedEvent.DBid=i;
     }
   }
   

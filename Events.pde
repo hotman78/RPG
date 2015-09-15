@@ -6,16 +6,18 @@ class Events{
   private int fromX,fromY;
   private  int DBid;
   private XML MAPs = loadXML("MAPs.xml");
-  private Command[] command;
+  //private Command[] command;
+  ArrayList<Command> command;
   //子クラスにおいてキャラクター毎に設定していきます。
   private HashMap<String,Integer> flag = new HashMap<String,Integer>();  
   Direction direction;
   int X, Y;
   int PAGE_NUMBER;
-  Events(int tX, int tY, int tSpeed, WALK tMoveOption, String image_name, int DBid,int MAP_CHIP_SIZE){
+  Events(int tX, int tY, int tSpeed, WALK tMoveOption, String image_name, int tDBid,int MAP_CHIP_SIZE){
     X=(tX-1)*MAP_CHIP_SIZE;
     Y=(tY-1)*MAP_CHIP_SIZE;
     speed=tSpeed;
+    DBid=tDBid;
     this.direction=Direction.DOWN;
     down =loadImage(image_name+"_down.png");
     up =loadImage(image_name+"_up.png");
@@ -27,9 +29,9 @@ class Events{
     this.toX=this.X;
     this.toY=this.Y;
     PAGE_NUMBER=MAPs.getChild("草原").getChildren("EVENT")[this.DBid].getChildren("page").length;
-    command =new Command[PAGE_NUMBER];
+    command = new ArrayList<Command>(PAGE_NUMBER);
     for(int i=0;i<PAGE_NUMBER;i++){
-      command[i] = new Command(this,i);
+      command.add(new Command(this,i));
     }
   }
   
@@ -46,8 +48,8 @@ class Events{
   //キャラクターを動かします。
   void update(){
     for(int i=0;i<MAPs.getChild("草原").getChildren("EVENT")[this.DBid].getChildren("page").length;i++){
-      command[i].doCommand();
-      command[i].startCommand("parallel");
+      command.get(i).doCommand();
+      command.get(i).startCommand("parallel");
     }
     
     switch(moveOption){
@@ -56,12 +58,11 @@ class Events{
       case stay:break;
       default:break;
     }
-    
     if(toX<X)X-=speed;
     if(X<toX)X+=speed;
     if(toY<Y)Y-=speed; //<>//
     if(Y<toY)Y+=speed;
-    if(X==toX)fromX=toX;
+    if(X==toX)fromX=X;
     if(Y==toY)fromY=toY;
     if(toY-Y<0)direction=Direction.UP;
     if(toY-Y>0)direction=Direction.DOWN;
@@ -70,24 +71,18 @@ class Events{
   }  
   
   private void move(Direction muki){
-    if((toX-fromX)*muki.dx() < world.MAP_CHIP_SIZE || (toY-fromY)*muki.dy() < world.MAP_CHIP_SIZE)direction=muki;
+    boolean canMove =((toX-fromX)*muki.dx()<world.MAP_CHIP_SIZE && muki.dx()!=0)||(toY-fromY)*muki.dy() < world.MAP_CHIP_SIZE &&  muki.dy()!=0;
+    if(canMove)direction=muki;
 
-    if(((toX-fromX)*muki.dx()<world.MAP_CHIP_SIZE || (toY-fromY)*muki.dy()<world.MAP_CHIP_SIZE)
-    && !world.maps.here(aboutToX()+muki.dx(),aboutToY()+muki.dy(),"all")){
+    if(canMove && !world.maps.here(aboutToX()+muki.dx(),aboutToY()+muki.dy(),"all")){
       toX+=world.MAP_CHIP_SIZE*muki.dx();
       toY+=world.MAP_CHIP_SIZE*muki.dy();
     }
-    if(( (toX-fromX)*muki.dx() < world.MAP_CHIP_SIZE || (toY-fromY)*muki.dy() < world.MAP_CHIP_SIZE)&&  !world.maps.here(aboutToX()+muki.dx(),aboutToY()+muki.dy(),"event")){
+    if(canMove &&  world.maps.here(aboutFromX()+muki.dx(),aboutFromY()+muki.dy(),"event")){
       for(int i=0;i<MAPs.getChild("草原").getChildren("EVENT")[this.DBid].getChildren("page").length;i++){
-        command[i].conntactEvent(world.maps.eventSearch(aboutToX()+1,aboutToY()));
+        command.get(i).conntactEvent(muki);
       }
     }
-  }
-  
-  void conntactEvent(){
-    for(int i=0;i<MAPs.getChild("草原").getChildren("EVENT")[this.DBid].getChildren("page").length;i++){
-      //command[i].conntactEvent(maps.eventSearch(aboutToX()+1,aboutToY()));
-    }    
   }
   
   //キャラクターが特定座標にいるか否かを返します
@@ -127,4 +122,11 @@ class Events{
   int aboutToY(){
     return floor(toY/world.MAP_CHIP_SIZE)+1;
   }
+  int aboutFromX(){
+    return floor(fromX/world.MAP_CHIP_SIZE)+1;
+  }
+  int aboutFromY(){
+    return floor(fromY/world.MAP_CHIP_SIZE)+1;
+  }
+
 }

@@ -11,9 +11,5 @@ class DB{
     loadData();
   }
   void loadData(){
-/*    XML UDB = loadXML("UDB.xml");
-     XML[] elements = UDB.getChildren("elements");
-     XML[] items = elements[0].getChildren("element");
-     */
   }
 }

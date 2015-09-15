@@ -9,7 +9,6 @@ class World{
   
   Key key;
   Maps maps;
-  Player player;
   DB db;
   Config config;
   TalkCommand tc;
@@ -20,7 +19,6 @@ class World{
     db =new DB();
     config=new Config();
     tc =new TalkCommand();
-    player=new Player(MAP_CHIP_SIZE);
     
     canMove=true;
   }

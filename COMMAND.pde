@@ -27,12 +27,9 @@ class Command{
   }
   
   void startCommand(String option){
-    println(pageNumber+","+commandID+","+trigger+","+option);
     if(!trigger.equals(option))return;
-    println(option);
     commandID=0;
     isExecuting=true;
-    println(isExecuting);
   }
   
   void doCommand(){
@@ -44,9 +41,13 @@ class Command{
   }
   
   //接触イベントを呼び出します
-  void conntactEvent(Events object){
-    playerEvent=world.player.player;
-    if(object==playerEvent)startCommand("playerConntact");
+  void conntactEvent(Direction muki){
+    Events object=world.maps.eventSearch(performer.aboutToX()+muki.dx(),performer.aboutToY()+muki.dy());
+    println(world.maps.eventSearch(performer.aboutFromX()+muki.dx(),performer.aboutFromY()+muki.dy()));
+    if(object==null || performer==object)return;
+    playerEvent=world.maps.player;
+    if(performer==playerEvent)startCommand("playerConntact");
+    if(object==playerEvent)startCommand("eventConntact");
   }
   
   void enterEvent(){
@@ -63,6 +64,7 @@ class Command{
     commandID++;
     doCommand();
   }
+  
   void stop(){
     player.close();  //サウンドデータを終了
     minim.stop();

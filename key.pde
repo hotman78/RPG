@@ -28,7 +28,7 @@ class Key{
       enter = false;
       for (int i = 0 ; i < world.maps.events.size() ; i++)
         for(int j=0;j<world.maps.MAPs.getChild("草原").getChildren("EVENT")[world.maps.events.get(i).DBid].getChildren("page").length;j++)
-          world.maps.events.get(i).command[j].enterEvent();
+          world.maps.events.get(i).command.get(j).enterEvent();
     }
   }
 }

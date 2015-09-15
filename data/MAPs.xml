@@ -9,7 +9,8 @@
 				<flagMake default="60">wait</flagMake>
 				<flagWhite option="--">wait</flagWhite>
 			</page>
-			<page Trigger="contact">
+			<page Trigger="playerConntact">
+				<messageWindow>よう</messageWindow>
 				<flagWhite option="=" Value="60">wait</flagWhite>
 				<DBwrite option="--" elements="1" element="1"></DBwrite>
 			</page>
