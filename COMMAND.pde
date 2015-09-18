@@ -12,17 +12,17 @@ class Command{
   XML MAPs = loadXML("MAPs.xml");
   XML xml=null;
   boolean isExecuting=false;
+  boolean canStartCommand=true;
   int commandID;
   int pageNumber;
   String trigger;
-  
   Events performer;
   Events playerEvent;
   
   Command(Events t_performer,int t_pageNumber){
     performer=t_performer;
     pageNumber=t_pageNumber;
-    xml=MAPs.getChild("草原").getChildren("EVENT")[performer.DBid].getChildren("page")[pageNumber];
+    xml=MAPs.getChild("map").getChildren("EVENT")[performer.DBid].getChildren("page")[pageNumber];
     trigger=xml.getString("Trigger");
   }
   
@@ -36,14 +36,13 @@ class Command{
     if(!isExecuting)return;
     if("messageWindow".equals(xml.listChildren()[commandID]) && !world.tc.inConversation){world.tc.startConversation(xml.getChildren()[commandID].getContent());}
     if("sound".equals(xml.listChildren()[commandID])){sound(xml.getChildren()[commandID].getContent());}
+    if("warp".equals(xml.listChildren()[commandID])){warp(xml.getChildren()[commandID].getInt("x"),xml.getChildren()[commandID].getInt("y"),xml.getChildren()[commandID].getInt("mapId"));}
     else if(commandID==xml.listChildren().length-1){commandID=0;isExecuting=false;}
     else {commandID++;doCommand();}
   }
-  
   //接触イベントを呼び出します
   void conntactEvent(Direction muki){
     Events object=world.maps.eventSearch(performer.aboutToX()+muki.dx(),performer.aboutToY()+muki.dy());
-    println(world.maps.eventSearch(performer.aboutFromX()+muki.dx(),performer.aboutFromY()+muki.dy()));
     if(object==null || performer==object)return;
     playerEvent=world.maps.player;
     if(performer==playerEvent)startCommand("playerConntact");
@@ -54,6 +53,10 @@ class Command{
     playerEvent=world.maps.player;
     if(performer.aboutX()==playerEvent.aboutX()+playerEvent.direction.dx()
     && performer.aboutY()==playerEvent.aboutY()+playerEvent.direction.dy()){startCommand("enter");}
+  }
+  
+  void warp(int x,int y,int mapId){
+    world.maps.loadMap(x,y,mapId);
   }
   
   void sound(String URL){

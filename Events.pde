@@ -1,53 +1,56 @@
 class Events{
-  private PImage down,up,left,right;
-  private float speed;
-  private WALK moveOption;
-  private int toX,toY;
-  private int fromX,fromY;
-  private  int DBid;
+  PImage imageDown,imageUp,imageLeft,imageRight;
+  String imageName;
+  
+  float speed;
+  WALK moveOption;
+  int toX,toY;
+  int fromX,fromY;
+  int DBid;
   private XML MAPs = loadXML("MAPs.xml");
-  //private Command[] command;
   ArrayList<Command> command;
   //子クラスにおいてキャラクター毎に設定していきます。
   private HashMap<String,Integer> flag = new HashMap<String,Integer>();  
   Direction direction;
   int X, Y;
-  int PAGE_NUMBER;
-  Events(int tX, int tY, int tSpeed, WALK tMoveOption, String image_name, int tDBid,int MAP_CHIP_SIZE){
+  int PAGE_SIZE;
+  Events(int tX, int tY, int tSpeed, WALK tMoveOption, String tImageName, int tDBid,int MAP_CHIP_SIZE){
     X=(tX-1)*MAP_CHIP_SIZE;
     Y=(tY-1)*MAP_CHIP_SIZE;
     speed=tSpeed;
     DBid=tDBid;
-    this.direction=Direction.DOWN;
-    down =loadImage(image_name+"_down.png");
-    up =loadImage(image_name+"_up.png");
-    left =loadImage(image_name+"_left.png");
-    right =loadImage(image_name+"_right.png"); 
+    imageName=tImageName;
+    this.direction=Direction.DOWN; 
     moveOption=tMoveOption;
     this.fromX=this.X;
     this.fromY=this.Y;
     this.toX=this.X;
     this.toY=this.Y;
-    PAGE_NUMBER=MAPs.getChild("草原").getChildren("EVENT")[this.DBid].getChildren("page").length;
-    command = new ArrayList<Command>(PAGE_NUMBER);
-    for(int i=0;i<PAGE_NUMBER;i++){
+    imageUp=loadImage(imageName+"_up.png");
+    imageDown=loadImage(imageName+"_down.png");
+    imageLeft=loadImage(imageName+"_left.png");
+    imageRight=loadImage(imageName+"_right.png");
+    PAGE_SIZE=MAPs.getChild("map").getChildren("EVENT")[this.DBid].getChildren("page").length;
+    command = new ArrayList<Command>(PAGE_SIZE);
+    for(int i=0;i<PAGE_SIZE;i++){
       command.add(new Command(this,i));
     }
   }
   
   //キャラクターを描画します。
   void draw(){
+    if(imageName==null)return;
     switch(direction){
-      case UP:image(up,X,Y);break;
-      case DOWN:image(down,X,Y);break;
-      case LEFT:image(left,X,Y);break;
-      case RIGHT:image(right,X,Y);break;
+      case UP:image(imageUp,X,Y);break;
+      case DOWN:image(imageDown,X,Y);break;
+      case LEFT:image(imageLeft,X,Y);break;
+      case RIGHT:image(imageRight,X,Y);break;
     }
   }
   
   //キャラクターを動かします。
   void update(){
-    for(int i=0;i<MAPs.getChild("草原").getChildren("EVENT")[this.DBid].getChildren("page").length;i++){
+    for(int i=0;i<MAPs.getChild("map").getChildren("EVENT")[this.DBid].getChildren("page").length;i++){
       command.get(i).doCommand();
       command.get(i).startCommand("parallel");
     }
@@ -79,7 +82,7 @@ class Events{
       toY+=world.MAP_CHIP_SIZE*muki.dy();
     }
     if(canMove &&  world.maps.here(aboutFromX()+muki.dx(),aboutFromY()+muki.dy(),"event")){
-      for(int i=0;i<MAPs.getChild("草原").getChildren("EVENT")[this.DBid].getChildren("page").length;i++){
+      for(int i=0;i<MAPs.getChild("map").getChildren("EVENT")[this.DBid].getChildren("page").length;i++){
         command.get(i).conntactEvent(muki);
       }
     }

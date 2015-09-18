@@ -1,23 +1,40 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <MAPs>
-	<草原 id="1">
-		<EVENT X="20" Y="3" name="yellow">
-			<WALK>stay</WALK>
-			<SPEED>1</SPEED>
-			<GAZOU>yellow</GAZOU>
+	<playerData x="20" y="4">
+		<mapId>0</mapId>
+		<walk>key_walk</walk>
+		<speed>2</speed>
+		<picture>player</picture>
+	</playerData>
+	
+	<map name="家の前">
+		<picture>家の前</picture>
+		<EVENT x="20" y="3">
+			<picture>yellow</picture>
+			
 			<page Trigger="parallel">
 				<flagMake default="60">wait</flagMake>
 				<flagWhite option="--">wait</flagWhite>
 			</page>
+			
 			<page Trigger="playerConntact">
-				<messageWindow>よう</messageWindow>
 				<flagWhite option="=" Value="60">wait</flagWhite>
 				<DBwrite option="--" elements="1" element="1"></DBwrite>
 			</page>
+			
 			<page Trigger="enter">
 				<sound>bgm.mp3</sound>
-				<messageWindow>よう</messageWindow>
 			</page>
 		</EVENT>
-	</草原>
+		<EVENT x="16" y="30">
+			<picture>yellow</picture>
+			<page Trigger="enter">
+				<warp x="16" y="1" mapId="1" />
+			</page>
+		</EVENT>
+	</map>
+	
+	<map>
+		<picture>森</picture>
+	</map>
 </MAPs>

@@ -12,10 +12,9 @@ class World{
   DB db;
   Config config;
   TalkCommand tc;
-  
   World(){
     key=new Key();
-    maps=new Maps();
+    maps=new Maps(MAP_CHIP_SIZE);
     db =new DB();
     config=new Config();
     tc =new TalkCommand();
@@ -25,11 +24,11 @@ class World{
   
   void draw(){
     time++;
-    if(time==1)maps.addEVENT(world.MAP_CHIP_SIZE);
+    //if(time==1)maps.addEVENT(MAP_CHIP_SIZE);
+    if(canMove==true)maps.update();
     maps.draw();
     tc.draw();
     config.debug();
-    if(canMove==true)maps.update();
   }
   void stop(){
     canMove=false;
