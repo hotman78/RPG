@@ -113,7 +113,10 @@ class CommonEventCommand extends Command{
     xml=EventXML.getChildren("Event")[pageNumber];
     trigger=xml.getString("Trigger");
   }
-  
+  void parallelEvent(){
+    super.parallelEvent();
+    println(pageNumber);
+  }
   void calledEvent(){
     startCommand("called");
   }
