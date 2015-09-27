@@ -4,116 +4,74 @@ Minim minim= new Minim(this);  //初期化
 
 class Command{
   String TalkingContents="null";  //要素ごとにひとつの話す内容をもたせます
-  AudioPlayer player;
-  
-  XML UDB = loadXML("UDB.xml");
-  XML CDB = loadXML("CDB.xml");
-  XML SDB = loadXML("SDB.xml");
-  XML MAPs = loadXML("MAPs.xml");
+  XML Maps = loadXML("Basicdata/Maps.xml");
   XML xml=null;
   boolean isExecuting=false;
   boolean canStartCommand=true;
-  int commandID;
+  int commandID=0;
   int pageNumber;
   String trigger;
-  Events performer;
-  Events playerEvent;
+  MapEvent performer;
+  MapEvent playerEvent;
+  ArrayList <BaseCommand> commands;
   
-  Command(Events t_performer,int t_pageNumber){
+  Command(MapEvent t_performer,int t_pageNumber){
+    commands=new ArrayList <BaseCommand>(10);
+    
     performer=t_performer;
     pageNumber=t_pageNumber;
-    xml=MAPs.getChild("map").getChildren("EVENT")[performer.DBid].getChildren("page")[pageNumber];
-    trigger=xml.getString("Trigger");
+    
+    commands.add(new Sound());
+    commands.add(new Warp());
+    commands.add(new Wait());
+    for(int i=0;i<commands.size();i++){
+      commands.get(i).getParent(this);
+    }
   }
   
-  void startCommand(String option){
-    if(!trigger.equals(option))return;
+  void startCommand(String trigger){
+    if(!trigger.equals(this.trigger))return;
+    if("automic".equals(this.trigger))world.canMove=false;
     commandID=0;
     isExecuting=true;
+    doCommand();
   }
   
   void doCommand(){
+    if(commandID==xml.listChildren().length-1){
+      world.canMove=true;
+      commandID=0;
+      isExecuting=false;
+    }
+    
     if(!isExecuting)return;
-    if("messageWindow".equals(xml.listChildren()[commandID]) && !world.tc.inConversation){world.tc.startConversation(xml.getChildren()[commandID].getContent());}
-    if("sound".equals(xml.listChildren()[commandID])){sound(xml.getChildren()[commandID].getContent());}
-    if("warp".equals(xml.listChildren()[commandID])){warp(xml.getChildren()[commandID].getInt("x"),xml.getChildren()[commandID].getInt("y"),xml.getChildren()[commandID].getInt("mapId"));}
-    else if(commandID==xml.listChildren().length-1){commandID=0;isExecuting=false;}
-    else {commandID++;doCommand();}
-  }
-  //接触イベントを呼び出します
-  void conntactEvent(Direction muki){
-    Events object=world.maps.eventSearch(performer.aboutToX()+muki.dx(),performer.aboutToY()+muki.dy());
-    if(object==null || performer==object)return;
-    playerEvent=world.maps.player;
-    if(performer==playerEvent)startCommand("playerConntact");
-    if(object==playerEvent)startCommand("eventConntact");
+    
+    int id=xml.getChildren()[commandID].getInt("id",-1);
+    if(id==-1){
+      commandID++;
+      doCommand();
+      return;
+    }
+    commands.get(id).doCommand(xml.getChildren()[commandID]);
   }
   
-  void enterEvent(){
-    playerEvent=world.maps.player;
-    if(performer.aboutX()==playerEvent.aboutX()+playerEvent.direction.dx()
-    && performer.aboutY()==playerEvent.aboutY()+playerEvent.direction.dy()){startCommand("enter");}
+  void parallelEvent(){
+    if(!world.canMove)return;
+    startCommand("parallel");
   }
   
-  void warp(int x,int y,int mapId){
-    world.maps.loadMap(x,y,mapId);
+  void automicEvent(){
+    if(!world.canMove)return;
+    startCommand("automic");
   }
-  
-  void sound(String URL){
-    if("stop".equals(URL)){stop();return;}
-    player = minim.loadFile(URL); //mp3ファイルを指定する 
-    player.play();  //再生
-    player.rewind();
-    commandID++;
-    doCommand();
-  }
-  
-  void stop(){
-    player.close();  //サウンドデータを終了
-    minim.stop();
-    //super.stop();
-    commandID++;
-    doCommand();
-  }
-
-   //変数をDBから読み込みます
-  private String DBread(String DBname,int indexElements,int indexElement){
-    XML DB=null;
-    if("UDB".equals(DBname))DB=UDB;
-    if("CDB".equals(DBname))DB=UDB;
-    if("SDB".equals(DBname))DB=SDB;
-    XML[] elements = DB.getChildren("elements");
-    XML[] items = elements[indexElements].getChildren("element");
-    return items[indexElement].getString("data");
-  }
-  //変数をDBに書き出します(数値の場合)
-  private void DBwrite(String DBname,int indexElements,int indexElement,int written,String option){
-    XML DB=null;
-    if(DBname=="UDB")DB=UDB;
-    if(DBname=="CDB")DB=UDB;
-    if(DBname=="SDB")DB=SDB;
-    XML item = DB.getChildren("elements")[indexElements].getChildren("element")[indexElement];
-    if(option=="==")item.setInt("data",written);
-    if(option=="+=")item.setInt("data",item.getInt("data")+written);
-    if(option=="-=")item.setInt("data",item.getInt("data")-written);
-  }
-  //変数をDBに書き出します(文字列の場合)
-  private void DBwrite(String DBname,int indexElements,int indexElement,String written){
-    XML DB=null;
-    if(DBname=="UDB")DB=UDB;
-    if(DBname=="CDB")DB=UDB;
-    if(DBname=="SDB")DB=SDB;
-    XML item = DB.getChildren("elements")[indexElements].getChildren("element")[indexElement];
-    item.setString("data",written);
-  }  
   
   //変数をフラグから読み込みます
-  private int flagRead(String key,Events performer){
+  private int flagRead(String key,MapEvent performer){
     return performer.flag.get(key);
   }
   
   //変数をフラグに書き込みます
-  private void flagWhite(String key,int value,Events performer,String option){
+  private void flagWhite(String key,int value,MapEvent performer,String option){
     if(option=="==")performer.flag.put(key,value);
     if(option=="+=")performer.flag.put(key,performer.flag.get(key)+value);
     if(option=="-=")performer.flag.put(key,performer.flag.get(key)-value);
@@ -123,37 +81,124 @@ class Command{
   void commonEvent(){
     
   }
-  
-  //メッセージウィンドウを表示します
-/*  void messageWindow(String TalkingContents){
-    dispContents=TalkingContents;
-    image(MessageBox,0,height*3/4,width, height*1/4);
-    text(dispContents,0+50,height*3/4+50);
-    
-  }*/
+}
+class MapEventCommand extends Command{
+  MapEventCommand(MapEvent performer,int pageNumber){
+    super(performer,pageNumber);
+    xml=Maps.getChild("map").getChildren("EVENT")[performer.DBid].getChildren("page")[pageNumber];
+    trigger=xml.getString("Trigger");
+  }
+  //接触イベントを呼び出します
+  void conntactEvent(Direction muki){
+    if(!world.canMove)return;
+    MapEvent object=world.maps.eventSearch(performer.aboutToX()+muki.dx(),performer.aboutToY()+muki.dy());
+    if(object==null || performer==object)return;
+    playerEvent=world.maps.player;
+    if(performer==playerEvent)startCommand("playerConntact");
+    if(object==playerEvent)startCommand("eventConntact");
+  }
+  //エンターイベントを呼び出します
+  void enterEvent(){
+    if(!world.canMove)return;
+    playerEvent=world.maps.player;
+    if(performer.aboutX()==playerEvent.aboutX()+playerEvent.direction.dx()
+    && performer.aboutY()==playerEvent.aboutY()+playerEvent.direction.dy()){startCommand("enter");}
+  }  
 }
 
-class TalkCommand{
-  PImage MessageBox;
-  String dispContents="";
-  boolean inConversation;
-  
-  TalkCommand(){
-    MessageBox=loadImage("MessageBox.png");
-    inConversation=false;
+class CommonEventCommand extends Command{
+  XML EventXML = loadXML("Basicdata/Common.xml");
+  CommonEventCommand(MapEvent performer,int pageNumber){
+    super(performer,pageNumber);
+    xml=EventXML.getChildren("Event")[pageNumber];
+    trigger=xml.getString("Trigger");
   }
   
-  void startConversation(String tDispContents){
-    dispContents=tDispContents;
-    inConversation=true;
+  void calledEvent(){
+    startCommand("called");
   }
-  void stopConversation(){
-    dispContents="";
-    inConversation=false;
+}
+
+class BaseCommand{
+  Command parent;
+  void doCommand(XML data){}
+  void getParent(Command parent){
+    this.parent=parent;
   }
+  void nextCommand(){
+    parent.commandID++;
+    parent.doCommand();    
+  }
+}
+
+class Wait extends BaseCommand{
+  int time=0;
+  void doCommand(XML data){
+    time++;
+    if(time==Integer.parseInt(data.getContent())){
+      time=0;
+      nextCommand();
+    }
+  }  
+}
+class Image extends BaseCommand{
+  ArrayList <ImageData>imageList;
+  PImage image;
+  
+  Image(){
+    imageList = new ArrayList<ImageData>(10);
+  }
+  
+  void setImage(String path,int x,int y){
+    imageList.add(new ImageData(path, x, y));
+  }
+  
   void draw(){
-    if(!inConversation)return;
-    image(MessageBox,0,height*3/4,width, height*1/4);
-    text(dispContents,0+50,height*3/4+50);    
+    for(int i=0;i<imageList.size();i++)
+    image(imageList.get(i).image
+    ,imageList.get(i).x
+    ,imageList.get(i).y);
+  }
+  
+  class ImageData{
+    PImage image;int x,y;
+    ImageData(String path,int x,int y){
+      this.x=x;
+      this.y=y;
+      image =loadImage(path);
+    }
+  } 
+}
+
+class Sound extends BaseCommand{
+  AudioPlayer player;
+  int x=0;
+  @Override
+  void doCommand(XML data){
+    if("stop".equals(data.getContent())){stop();return;}
+    try {
+      player = minim.loadFile("BGM/"+data.getContent()); //mp3ファイルを指定する 
+      player.play();  //再生
+      player.rewind();
+    }catch (NullPointerException e) {
+      println("ファイルを読み込めませんでした");
+    }
+    nextCommand();
+  }
+  void stop(){
+    player.close();  //サウンドデータを終了
+    minim.stop();
+    //super.stop();
+    nextCommand();
+  }
+}
+
+class Warp extends BaseCommand{
+  void doCommand(XML data){
+    int mapId=int(data.getContent());
+    int x=data.getInt("x");
+    int y=data.getInt("y");
+    world.maps.loadMap(x,y,mapId);
+    nextCommand();
   }
 }

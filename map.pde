@@ -1,47 +1,49 @@
 class Maps{
   //マップを設定させます。今のところ1面しかないです
   PImage map,hash;
-  XML MAPs;
-  ArrayList<Events> events;
+  XML Maps;
+  ArrayList<MapEvent> events;
   Command common[];
-  Events player;
+  int COMMON_SIZE;
+  MapEvent player;
   int MAP_CHIP_SIZE;
   
   Maps(int tMAP_CHIP_SIZE){
     MAP_CHIP_SIZE=tMAP_CHIP_SIZE;
-    events = new ArrayList<Events>();
-    MAPs = loadXML("MAPs.xml");
-    int x=MAPs.getChild("playerData").getInt("x");
-    int y=MAPs.getChild("playerData").getInt("y");
-    int mapId=Integer.parseInt(MAPs.getChild("playerData").getChild("mapId").getContent());
+    events = new ArrayList<MapEvent>();
+    Maps = loadXML("BasicData/Maps.xml");
+    int x=Maps.getChild("playerData").getInt("x");
+    int y=Maps.getChild("playerData").getInt("y");
+    int mapId=Integer.parseInt(Maps.getChild("playerData").getChild("mapId").getContent());
     loadMap(x,y,mapId);
+    addCommon();
   }
   
   void loadMap(int pX,int pY,int mapId){
     WALK walkType;
     String imageName;
     int speed;
-    String picture=MAPs.getChildren("map")[mapId].getChild("picture").getContent();
-    map = loadImage(picture+".png");
-    hash = loadImage(picture+"_mask.png");
+    String picture=Maps.getChildren("map")[mapId].getChild("picture").getContent();
+    map = loadImage("MapData/"+picture+".png");
+    hash = loadImage("MapData/"+picture+"_mask.png");
     
     events.clear();
-    for(int i=0;i<MAPs.getChildren("map")[mapId].getChildren("EVENT").length;i++){
-      int X=MAPs.getChildren("map")[mapId].getChildren("EVENT")[i].getInt("x");
-      int Y=MAPs.getChildren("map")[mapId].getChildren("EVENT")[i].getInt("y");
+    for(int i=0;i<Maps.getChildren("map")[mapId].getChildren("EVENT").length;i++){
+      int X=Maps.getChildren("map")[mapId].getChildren("EVENT")[i].getInt("x");
+      int Y=Maps.getChildren("map")[mapId].getChildren("EVENT")[i].getInt("y");
       
       try{
-        speed=Integer.parseInt(MAPs.getChildren("map")[mapId].getChildren("EVENT")[i].getChild("speed").getContent());
+        speed=Integer.parseInt(Maps.getChildren("map")[mapId].getChildren("EVENT")[i].getChild("speed").getContent());
       }catch(NullPointerException e){speed=0;}
       
       try{
-        walkType=WALK.valueOf(MAPs.getChildren("map")[mapId].getChildren("EVENT")[i].getChild("walk").getContent());
+        walkType=WALK.valueOf(Maps.getChildren("map")[mapId].getChildren("EVENT")[i].getChild("walk").getContent());
       }catch(NullPointerException e){walkType=WALK.stay;}
       
       try{
-        imageName=MAPs.getChildren("map")[mapId].getChildren("EVENT")[i].getChild("picture").getContent();
+        imageName=Maps.getChildren("map")[mapId].getChildren("EVENT")[i].getChild("picture").getContent();
       }catch(NullPointerException e){imageName=null;}
-      Events addedEvent =new Events(X,Y,speed,walkType,imageName,i,MAP_CHIP_SIZE);
+      MapEvent addedEvent =new MapEvent(X,Y,speed,walkType,imageName,i,MAP_CHIP_SIZE);
       events.add(addedEvent);
     }
     addPlayer(pX,pY);
@@ -50,19 +52,19 @@ class Maps{
   void addPlayer(int pX,int pY){
     WALK pWalkType;
     try{
-      pWalkType=WALK.valueOf(MAPs.getChild("getChildplayerData").getChild("walk").getContent());
+      pWalkType=WALK.valueOf(Maps.getChild("getChildplayerData").getChild("walk").getContent());
     }catch(NullPointerException e){pWalkType=WALK.key_walk;}
-    int pSpeed=Integer.parseInt(MAPs.getChild("playerData").getChild("speed").getContent());
-    String pPicture=MAPs.getChild("playerData").getChild("picture").getContent();
-    player =new Events(pX,pY,pSpeed,pWalkType,pPicture,0,MAP_CHIP_SIZE);
+    int pSpeed=Integer.parseInt(Maps.getChild("playerData").getChild("speed").getContent());
+    String pPicture=Maps.getChild("playerData").getChild("picture").getContent();
+    player =new MapEvent(pX,pY,pSpeed,pWalkType,pPicture,0,MAP_CHIP_SIZE);
     events.add(player);    
   }
   
   //ここからCommonEventを読み込みます
-  void addCOMMON(){
-    int COMMON_SIZE=loadXML("COMMON.xml").getChild("page").getChildren("command").length;
-    common = new Command[COMMON_SIZE];
-    for(int i=0;i<COMMON_SIZE;i++)common[i]=new Command(null,i);
+  void addCommon(){
+    COMMON_SIZE=loadXML("BasicData/Common.xml").getChildren("Event").length;
+    common = new CommonEventCommand[COMMON_SIZE];
+    for(int i=0;i<COMMON_SIZE;i++)common[i]=new CommonEventCommand(null,i);
   }
   
   //イベントを動かします
@@ -72,14 +74,19 @@ class Maps{
         events.get(i).update();
       }
     }
+    for(int i=0;i<COMMON_SIZE;i++){
+      common[i].doCommand();
+      common[i].parallelEvent();
+      common[i].automicEvent();
+    }
   }
   //描画します
   void draw(){
     image(map,0,0);
-    println(events.size());
     for (int i = 0 ; i < events.size() ; i++){
       events.get(i).draw();
     }
+   //command.drawImage(); 
   }
   
   private color hash(int X,int Y){
@@ -108,7 +115,7 @@ class Maps{
     }return false;
   }
   
-  Events eventSearch(int X,int Y){
+  MapEvent eventSearch(int X,int Y){
     for (int i = 0 ; i < events.size() ; i++) {
       if(events.get(i).here(X,Y))return events.get(i);
     }return null;

@@ -1,0 +1,5 @@
+<Common>
+	<Event trigger="parallel">
+		<warp id="1" x="1" y="1" mapId="1" />
+	</Event>
+</Common>

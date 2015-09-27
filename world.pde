@@ -24,7 +24,6 @@ class World{
   
   void draw(){
     time++;
-    //if(time==1)maps.addEVENT(MAP_CHIP_SIZE);
     if(canMove==true)maps.update();
     maps.draw();
     tc.draw();

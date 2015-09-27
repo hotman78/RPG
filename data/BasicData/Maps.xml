@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<MAPs>
+	<playerData x="20" y="4">
+		<mapId>0</mapId>
+		<walk>key_walk</walk>
+		<speed>2</speed>
+		<picture>player</picture>
+	</playerData>
+	
+	<map name="家の前">
+		<picture>家の前</picture>
+		<EVENT x="20" y="3">
+			<picture>yellow</picture>
+			
+			<page Trigger="parallel">
+			</page>
+			
+			<page Trigger="playerConntact">
+			</page>
+			<page Trigger="automic">
+			</page>			
+			<page Trigger="enter">
+				<command id="0">bgm.mp3</command>
+			</page>
+		</EVENT>
+		<EVENT x="16" y="30">
+			<picture>yellow</picture>
+			<page Trigger="enter">
+				<warp x="16" y="1" mapId="1" />
+			</page>
+		</EVENT>
+	</map>
+	
+	<map>
+		<picture>森</picture>
+	</map>
+</MAPs>

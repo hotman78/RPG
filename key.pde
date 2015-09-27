@@ -27,7 +27,7 @@ class Key{
     else if(keyCode==ENTER) {
       enter = false;
       for (int i = 0 ; i < world.maps.events.size() ; i++)
-        for(int j=0;j<world.maps.MAPs.getChild("map").getChildren("EVENT")[world.maps.events.get(i).DBid].getChildren("page").length;j++)
+        for(int j=0;j<world.maps.Maps.getChild("map").getChildren("EVENT")[world.maps.events.get(i).DBid].getChildren("page").length;j++)
           world.maps.events.get(i).command.get(j).enterEvent();
     }
   }
