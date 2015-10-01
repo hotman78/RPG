@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <DataBase>
-	<CDB></CDB>
+	<CDB>
+		<type>
+			<data>
+				<item kind="String">aaa</item>
+			</data>
+		</type>
+	</CDB>
 	<UDB></UDB>
 	<SDB></SDB>
 </DataBase>

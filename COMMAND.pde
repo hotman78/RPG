@@ -3,7 +3,6 @@ import ddf.minim.*;
 Minim minim= new Minim(this);  //初期化 
 
 class Command{
-  String TalkingContents="null";  //要素ごとにひとつの話す内容をもたせます
   XML Maps = loadXML("Basicdata/Maps.xml");
   XML xml=null;
   boolean isExecuting=false;
@@ -76,11 +75,6 @@ class Command{
     if(option=="+=")performer.flag.put(key,performer.flag.get(key)+value);
     if(option=="-=")performer.flag.put(key,performer.flag.get(key)-value);
   }
-  
-  //コモンイベントを読み込み、実行します
-  void commonEvent(){
-    
-  }
 }
 class MapEventCommand extends Command{
   MapEventCommand(MapEvent performer,int pageNumber){
@@ -115,14 +109,13 @@ class CommonEventCommand extends Command{
   }
   void parallelEvent(){
     super.parallelEvent();
-    println(pageNumber);
   }
   void calledEvent(){
     startCommand("called");
   }
 }
 
-class BaseCommand{
+class   BaseCommand{
   Command parent;
   void doCommand(XML data){}
   void getParent(Command parent){
@@ -131,6 +124,14 @@ class BaseCommand{
   void nextCommand(){
     parent.commandID++;
     parent.doCommand();    
+  }
+}
+class CallCommonEvent extends BaseCommand{
+  void doCommand(){
+    //maps.common[i].calledEvent(this);
+  }
+  void stopCommand(){
+    nextCommand();
   }
 }
 
@@ -191,7 +192,6 @@ class Sound extends BaseCommand{
   void stop(){
     player.close();  //サウンドデータを終了
     minim.stop();
-    //super.stop();
     nextCommand();
   }
 }
@@ -204,4 +204,9 @@ class Warp extends BaseCommand{
     world.maps.loadMap(x,y,mapId);
     nextCommand();
   }
+}
+class DBGet extends BaseCommand{
+  void doCommand(XML data){
+    DB db =new DB();
+  }  
 }

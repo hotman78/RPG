@@ -63,7 +63,6 @@ class Maps{
   //ここからCommonEventを読み込みます
   void addCommon(){
     COMMON_SIZE=loadXML("BasicData/Common.xml").getChildren("Event").length;
-    println(COMMON_SIZE);
     common = new CommonEventCommand[COMMON_SIZE];
     for(int i=0;i<COMMON_SIZE;i++)common[i]=new CommonEventCommand(null,i);
   }
