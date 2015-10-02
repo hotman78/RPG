@@ -82,22 +82,22 @@ class Maps{
   }
   //描画します
   void draw(){
-    image(map,0,0);
+    world.c.pg.beginDraw();
+    world.c.pg.image(map,0,0);
     for (int i = 0 ; i < events.size() ; i++){
       events.get(i).draw();
     }
-   //command.drawImage(); 
+    world.c.pg.endDraw();
   }
   
-  private color hash(int X,int Y){
-   if(X>0 && X<world.mapsizeX+1 && Y>0 && Y<world.mapsizeY+1)
-     return hash.pixels[(Y-1)*hash.width+(X-1)];
+  private color hash(int x,int y){
+   if(x>0 && x<world.mapsizeX+1 && y>0 && y<world.mapsizeY+1)
+     return hash.pixels[(y-1)*hash.width+(x-1)];
    else return color(0);
   }
   boolean here(int X,int Y,String option){
     //障害物の判定を行います
     if(option=="map")return (hash(X,Y)== color(0));
-    
     //イベントの当たり判定を行います
     if(option=="event"){
       boolean f=false;
@@ -110,7 +110,7 @@ class Maps{
       if(hash(X,Y)== color(0))return true;
       boolean f=false;
       for (int i = 0 ; i < events.size() ; i++){
-        if(events.get(i).here(X,Y))f=true;
+        if(events.get(i).here(X,Y)){f=true;}
       }return f;
     }return false;
   }

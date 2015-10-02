@@ -11,7 +11,7 @@ class Command{
   int pageNumber;
   String trigger;
   MapEvent performer;
-  MapEvent playerEvent;
+  MapEvent player;
   ArrayList <BaseCommand> commands;
   
   Command(MapEvent t_performer,int t_pageNumber){
@@ -87,16 +87,16 @@ class MapEventCommand extends Command{
     if(!world.canMove)return;
     MapEvent object=world.maps.eventSearch(performer.aboutToX()+muki.dx(),performer.aboutToY()+muki.dy());
     if(object==null || performer==object)return;
-    playerEvent=world.maps.player;
-    if(performer==playerEvent)startCommand("playerConntact");
-    if(object==playerEvent)startCommand("eventConntact");
+    player=world.maps.player;
+    if(performer==player)startCommand("playerConntact");
+    if(object==player)startCommand("eventConntact");
   }
   //エンターイベントを呼び出します
   void enterEvent(){
     if(!world.canMove)return;
-    playerEvent=world.maps.player;
-    if(performer.aboutX()==playerEvent.aboutX()+playerEvent.direction.dx()
-    && performer.aboutY()==playerEvent.aboutY()+playerEvent.direction.dy()){startCommand("enter");}
+    player=world.maps.player;
+    if(performer.aboutX()==player.aboutX()+player.direction.dx()
+    && performer.aboutY()==player.aboutY()+player.direction.dy()){startCommand("enter");}
   }  
 }
 
@@ -180,8 +180,9 @@ class Sound extends BaseCommand{
   @Override
   void doCommand(XML data){
     if("stop".equals(data.getContent())){stop();return;}
+    try{player.close();}catch(NullPointerException e){}
     try {
-      player = minim.loadFile("BGM/"+data.getContent()); //mp3ファイルを指定する 
+      player = minim.loadFile("BGM/"+data.getContent()); //mp3ファイルを指定する
       player.play();  //再生
       player.rewind();
     }catch (NullPointerException e) {

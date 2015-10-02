@@ -2,6 +2,8 @@ World world;
 
 void setup(){
   size(480, 480);
+  background(0);
+  //surface.setResizable(true);
   world=new World();
 }
 
