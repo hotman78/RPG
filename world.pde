@@ -7,18 +7,18 @@ class World{
   boolean canMove;
   int time;
   
-  Key key;
+  Input input;
   Maps maps;
   DB db;
-  TalkCommand tc;
   Camera c;
+  Image image;
   
   World(){
-    key=new Key();
+    input=new Input();
     maps=new Maps(MAP_CHIP_SIZE);
     db =new DB();
-    tc =new TalkCommand();
     c =new Camera();
+    image= new Image();
     canMove=true;
   }
   
@@ -27,8 +27,8 @@ class World{
     if(canMove==true)maps.update();
     c.update();
     maps.draw();
-    tc.draw();
     c.draw();
+    image.draw();
   }
   void stop(){
     canMove=false;
@@ -36,7 +36,7 @@ class World{
 }
 
 class Camera{
-  int zoom=2;
+  float zoom=1.5;
   int x;
   int y;
   PGraphics pg;
@@ -47,11 +47,11 @@ class Camera{
   void update(){
     player=world.maps.player;
     if(player.x*zoom<width/2)x=0;
-    else if((pg.width-player.x)*zoom<width/2){x=pg.width*zoom-width;}
-    else x=player.x*zoom-width/2;
+    else if((pg.width-player.x)*zoom<width/2){x=round(pg.width*zoom-width);}
+    else x=round(player.x*zoom-width/2);
     if(player.y*zoom<height/2)y=0;
-    else if((pg.height-player.y)*zoom<height/2){y=pg.height*zoom-height;}
-    else y=player.y*zoom-height/2;
+    else if((pg.height-player.y)*zoom<height/2){y=round(pg.height*zoom-height);}
+    else y=round(player.y*zoom-height/2);
   }
   void draw(){
     background(0);

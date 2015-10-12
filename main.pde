@@ -12,9 +12,9 @@ void draw(){
 }
 
 void keyPressed(){
-  world.key.keyPressed();
+  world.input.keyPressed();
 }
 
 void keyReleased(){
-  world.key.keyReleased();
+  world.input.keyReleased();
 }

@@ -20,13 +20,14 @@
 			<page Trigger="automic">
 			</page>			
 			<page Trigger="enter">
-				<command id="0">bgm.mp3</command>
+				<Talk>aa</Talk>
+				<Talk>bb</Talk>
 			</page>
 		</EVENT>
 		<EVENT x="16" y="30">
 			<picture>yellow</picture>
 			<page Trigger="enter">
-				<warp x="16" y="1" mapId="1" />
+				<Warp x="16" y="1" map="0" />
 			</page>
 		</EVENT>
 	</map>

@@ -7,6 +7,7 @@ class MapEvent{
   int toX,toY;
   int fromX,fromY;
   int DBid;
+  
   private XML map = loadXML("BasicData/Maps.xml");
   ArrayList<MapEventCommand> command;
   //子クラスにおいてキャラクター毎に設定していきます。
@@ -17,7 +18,6 @@ class MapEvent{
   MapEvent(int x, int y, int speed, WALK moveOption, String imageName, int DBid,int MAP_CHIP_SIZE){
     this.x=(x-1)*MAP_CHIP_SIZE;
     this.y=(y-1)*MAP_CHIP_SIZE;
-    println(this.x+" "+this.y);
     this.speed=speed;
     this.DBid=DBid;
     this.imageName=imageName;
@@ -54,8 +54,8 @@ class MapEvent{
   
   //キャラクターを動かします。
   void update(){
-    for(int i=0;i<map.getChild("map").getChildren("EVENT")[this.DBid].getChildren("page").length;i++){
-      command.get(i).doCommand();
+    for(int i=0;i<PAGE_SIZE;i++){
+      command.get(i).update();
       command.get(i).parallelEvent();
       command.get(i).automicEvent();
     }
@@ -78,16 +78,16 @@ class MapEvent{
     if(toX-x>0 && toY==y)direction=Direction.RIGHT;
   }  
   
-  private void move(Direction muki){
-    boolean canMove =((toX-fromX)==0  && muki.dx()!=0)||((toY-fromY) ==0 && muki.dy()!=0);
-    if(canMove)direction=muki;
-    if(canMove && !world.maps.here(aboutToX()+muki.dx(),aboutToY()+muki.dy(),"all")){
-      toX+=world.MAP_CHIP_SIZE*muki.dx();
-      toY+=world.MAP_CHIP_SIZE*muki.dy();
+  private void move(Direction picDirection){
+    boolean canMove =((toX-fromX)==0  && picDirection.dx()!=0)||((toY-fromY) ==0 && picDirection.dy()!=0);
+    if(canMove)direction=picDirection;
+    if(canMove && !world.maps.here(aboutToX()+picDirection.dx(),aboutToY()+picDirection.dy(),"all")){
+      toX+=world.MAP_CHIP_SIZE*picDirection.dx();
+      toY+=world.MAP_CHIP_SIZE*picDirection.dy();
     }
-    if(canMove &&  world.maps.here(aboutFromX()+muki.dx(),aboutFromY()+muki.dy(),"event")){
+    if(canMove &&  world.maps.here(aboutFromX()+picDirection.dx(),aboutFromY()+picDirection.dy(),"event")){
       for(int i=0;i<map.getChild("map").getChildren("EVENT")[this.DBid].getChildren("page").length;i++){
-        command.get(i).conntactEvent(muki);
+        command.get(i).conntactEvent(picDirection);
       }
       
     }
@@ -97,10 +97,10 @@ class MapEvent{
   boolean here(int x,int y){return (x==this.aboutX() && y==this.aboutY());}
   
   private void key_move(){
-    if(world.key.up)move(Direction.UP);
-    if(world.key.down)move(Direction.DOWN);
-    if(world.key.left)move(Direction.LEFT);
-    if(world.key.right)move(Direction.RIGHT);
+    if(world.input.up)move(Direction.UP);
+    if(world.input.down)move(Direction.DOWN);
+    if(world.input.left)move(Direction.LEFT);
+    if(world.input.right)move(Direction.RIGHT);
   }
   
   private void random_walk(){

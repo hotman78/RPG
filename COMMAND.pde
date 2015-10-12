@@ -1,143 +1,32 @@
-//サウンドを流せるようにします
-import ddf.minim.*;
-Minim minim= new Minim(this);  //初期化 
-
-class Command{
-  XML Maps = loadXML("Basicdata/Maps.xml");
-  XML xml=null;
-  boolean isExecuting=false;
-  boolean canStartCommand=true;
-  int commandID=0;
-  int pageNumber;
-  String trigger;
-  MapEvent performer;
-  MapEvent player;
-  ArrayList <BaseCommand> commands;
-  
-  Command(MapEvent t_performer,int t_pageNumber){
-    commands=new ArrayList <BaseCommand>(10);
-    
-    performer=t_performer;
-    pageNumber=t_pageNumber;
-    
-    commands.add(new Sound());
-    commands.add(new Warp());
-    commands.add(new Wait());
-    for(int i=0;i<commands.size();i++){
-      commands.get(i).getParent(this);
-    }
-  }
-  
-  void startCommand(String trigger){
-    if(!trigger.equals(this.trigger))return;
-    if("automic".equals(this.trigger))world.canMove=false;
-    commandID=0;
-    isExecuting=true;
-    doCommand();
-  }
-  
-  void doCommand(){
-    if(commandID==xml.listChildren().length-1){
-      world.canMove=true;
-      commandID=0;
-      isExecuting=false;
-    }
-    
-    if(!isExecuting)return;
-    
-    int id=xml.getChildren()[commandID].getInt("id",-1);
-    if(id==-1){
-      commandID++;
-      doCommand();
-      return;
-    }
-    commands.get(id).doCommand(xml.getChildren()[commandID]);
-  }
-  
-  void parallelEvent(){
-    if(!world.canMove)return;
-    startCommand("parallel");
-  }
-  
-  void automicEvent(){
-    if(!world.canMove)return;
-    startCommand("automic");
-  }
-  
-  //変数をフラグから読み込みます
-  private int flagRead(String key,MapEvent performer){
-    return performer.flag.get(key);
-  }
-  
-  //変数をフラグに書き込みます
-  private void flagWhite(String key,int value,MapEvent performer,String option){
-    if(option=="==")performer.flag.put(key,value);
-    if(option=="+=")performer.flag.put(key,performer.flag.get(key)+value);
-    if(option=="-=")performer.flag.put(key,performer.flag.get(key)-value);
-  }
-}
-class MapEventCommand extends Command{
-  MapEventCommand(MapEvent performer,int pageNumber){
-    super(performer,pageNumber);
-    xml=Maps.getChild("map").getChildren("EVENT")[performer.DBid].getChildren("page")[pageNumber];
-    trigger=xml.getString("Trigger");
-  }
-  //接触イベントを呼び出します
-  void conntactEvent(Direction muki){
-    if(!world.canMove)return;
-    MapEvent object=world.maps.eventSearch(performer.aboutToX()+muki.dx(),performer.aboutToY()+muki.dy());
-    if(object==null || performer==object)return;
-    player=world.maps.player;
-    if(performer==player)startCommand("playerConntact");
-    if(object==player)startCommand("eventConntact");
-  }
-  //エンターイベントを呼び出します
-  void enterEvent(){
-    if(!world.canMove)return;
-    player=world.maps.player;
-    if(performer.aboutX()==player.aboutX()+player.direction.dx()
-    && performer.aboutY()==player.aboutY()+player.direction.dy()){startCommand("enter");}
-  }  
-}
-
-class CommonEventCommand extends Command{
-  XML EventXML = loadXML("Basicdata/Common.xml");
-  CommonEventCommand(MapEvent performer,int pageNumber){
-    super(performer,pageNumber);
-    xml=EventXML.getChildren("Event")[pageNumber];
-    trigger=xml.getString("Trigger");
-  }
-  void parallelEvent(){
-    super.parallelEvent();
-  }
-  void calledEvent(){
-    startCommand("called");
-  }
-}
-
-class   BaseCommand{
+class BaseCommand{
   Command parent;
-  void doCommand(XML data){}
+  
+  void update(XML data){};
+  void keyPressed(){}
+  void keyTyped(){}
+  void keyReleased(){}
+  
   void getParent(Command parent){
     this.parent=parent;
   }
+  
   void nextCommand(){
     parent.commandID++;
-    parent.doCommand();    
+    parent.update();
   }
 }
-class CallCommonEvent extends BaseCommand{
-  void doCommand(){
-    //maps.common[i].calledEvent(this);
+class For extends BaseCommand{
+  //Command command = new MapEventCommand(this,this);
+  void update(XML data){
+    
   }
-  void stopCommand(){
-    nextCommand();
+  void forC(int count){
+    int count=0;
   }
 }
-
 class Wait extends BaseCommand{
   int time=0;
-  void doCommand(XML data){
+  void update(XML data){
     time++;
     if(time==Integer.parseInt(data.getContent())){
       time=0;
@@ -145,40 +34,112 @@ class Wait extends BaseCommand{
     }
   }  
 }
-class Image extends BaseCommand{
-  ArrayList <ImageData>imageList;
-  PImage image;
+
+class Talk extends BaseCommand{
+  int time=0;
   
-  Image(){
-    imageList = new ArrayList<ImageData>(10);
+  void update(XML data){
+    String text=data.getContent();
+    if(time==0)start(text);
+    time++;
   }
   
-  void setImage(String path,int x,int y){
-    imageList.add(new ImageData(path, x, y));
+  void keyTyped(){
+    if(keyCode==ENTER)stop();
+  }
+  
+  void start(String text){
+    world.stop();
+    world.image.setImage("Picture/MessageBox.png",5,height-120,0.6,1);
+    world.image.setText(text,50,height-60,20,2);
+  }
+  
+  void stop(){
+    time=0;
+    world.canMove=true;
+    world.input.typed=true;
+    world.image.remove(1);
+    world.image.remove(2);
+    nextCommand();
+  }
+}
+
+class ImageCommand extends BaseCommand{
+  int x=0,y=0,id=0;
+  String path="";
+  void update(XML data){
+    x=data.getInt("x");
+    y=data.getInt("y");
+    id=data.getInt("id");
+    path=data.getContent();
+    world.image.setImage(path,x,y,1,id);
+    nextCommand();
+  }
+}
+
+class Image{
+  HashMap<Integer,ImageData> imageID;
+  PImage image;
+  ImageData data;
+  Image(){
+    imageID = new HashMap<Integer,ImageData>();
+  }
+  
+  void remove(int id){
+    imageID.remove(id);
+  }
+  
+  void clear(){
+    imageID.clear();
+  }
+  
+  void setImage(String path,int x,int y,float zoom,int id){
+    int width=round(loadImage(path).width*zoom);
+    int height=round(loadImage(path).height*zoom);
+    data=new ImageData(loadImage(path), x, y,width,height);
+    imageID.put(id,data);
+  }
+  
+  void setText(String text,int x,int y,int size,int id){
+    PGraphics pg =createGraphics(text.length()*size,size*2);
+    pg.beginDraw();
+    pg.textSize(size);
+    pg.text(text,0,size);
+    pg.endDraw();
+    PImage image=pg.get();
+    data=new ImageData(image, x, y,image.width,image.height);
+    imageID.put(id,data);
   }
   
   void draw(){
-    for(int i=0;i<imageList.size();i++)
-    image(imageList.get(i).image
-    ,imageList.get(i).x
-    ,imageList.get(i).y);
+    for(Integer
+    key : imageID.keySet()){
+      ImageData data=imageID.get(key);
+      image(data.image
+      ,data.x
+      ,data.y
+      ,data.width
+      ,data.height);
+    }
   }
   
   class ImageData{
-    PImage image;int x,y;
-    ImageData(String path,int x,int y){
+    PImage image;
+    int x,y,width,height;
+    ImageData(PImage image,int x,int y,int width,int height){
+      this.image=image;
       this.x=x;
       this.y=y;
-      image =loadImage(path);
+      this.width=width;
+      this.height=height;
     }
-  } 
+  }
 }
 
 class Sound extends BaseCommand{
   AudioPlayer player;
   int x=0;
-  @Override
-  void doCommand(XML data){
+  void update(XML data){
     if("stop".equals(data.getContent())){stop();return;}
     try{player.close();}catch(NullPointerException e){}
     try {
@@ -198,16 +159,18 @@ class Sound extends BaseCommand{
 }
 
 class Warp extends BaseCommand{
-  void doCommand(XML data){
-    int mapId=int(data.getContent());
+  void update(XML data){
+    int map=data.getInt("map");
+    println(map);
     int x=data.getInt("x");
     int y=data.getInt("y");
-    world.maps.loadMap(x,y,mapId);
+    world.maps.loadMap(x,y,map);
     nextCommand();
   }
 }
+
 class DBGet extends BaseCommand{
-  void doCommand(XML data){
+  void update(XML data){
     DB db =new DB();
-  }  
+  }
 }

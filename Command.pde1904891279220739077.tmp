@@ -1,0 +1,244 @@
+//サウンドを流せるようにします
+import ddf.minim.*;
+Minim minim= new Minim(this);  //初期化 
+
+class Command{
+  XML Maps = loadXML("Basicdata/Maps.xml");
+  XML xml=null;
+  boolean isExecuting=false;
+  boolean canStartCommand=true;
+  int commandID=0;
+  int pageNumber;
+  String trigger;
+  HashMap<String,BaseCommand> map;
+  MapEvent performer;
+  MapEvent player;
+  
+  Command(MapEvent t_performer,int t_pageNumber){
+    map = new HashMap<String,BaseCommand>();
+    performer=t_performer;
+    pageNumber=t_pageNumber;
+    
+    addCommand("Sound",new Sound());
+    addCommand("Warp",new Warp());
+    addCommand("Wait",new Wait());
+    addCommand("Image",new ImageCommand());
+  }
+  
+  void addCommand(String code,BaseCommand obj){
+    map.put(code,obj);
+    obj.getParent(this);
+  }
+  
+  void startCommand(String trigger){
+    if(!trigger.equals(this.trigger))return;
+    if("automic".equals(this.trigger))world.canMove=false;
+    commandID=0;
+    isExecuting=true;
+    doCommand();
+  }
+  
+  void doCommand(){
+    //コマンドをすべて実行し終わったら時
+    if(commandID==xml.listChildren().length-1){
+      commandID=0;
+      world.canMove=true;
+      if("enter".equals(trigger))println(xml.listChildren().length+" "+commandID);
+      isExecuting=false;
+      return;
+    }
+    if(!isExecuting)return;
+    if(map.get(xml.getChildren()[commandID].getName())==null){
+      commandID++;
+      doCommand();      
+    }else map.get(xml.getChildren()[commandID].getName()).doCommand(xml.getChildren()[commandID]);
+  }
+  
+  void parallelEvent(){
+    if(!world.canMove)return;
+    startCommand("parallel");
+  }
+  
+  void automicEvent(){
+    if(!world.canMove)return;
+    startCommand("automic");
+  }
+  
+  //変数をフラグから読み込みます
+  private int flagRead(String key,MapEvent performer){
+    return performer.flag.get(key);
+  }
+  
+  //変数をフラグに書き込みます
+  private void flagWhite(String key,int value,MapEvent performer,String option){
+    if(option=="==")performer.flag.put(key,value);
+    if(option=="+=")performer.flag.put(key,performer.flag.get(key)+value);
+    if(option=="-=")performer.flag.put(key,performer.flag.get(key)-value);
+  }
+}
+
+class MapEventCommand extends Command{
+  MapEventCommand(MapEvent performer,int pageNumber){
+    super(performer,pageNumber);
+    xml=Maps.getChild("map").getChildren("EVENT")[performer.DBid].getChildren("page")[pageNumber];
+    trigger=xml.getString("Trigger");
+  }
+  //接触イベントを呼び出します
+  void conntactEvent(Direction picDirection){
+    if(!world.canMove)return;
+    MapEvent object=world.maps.eventSearch(performer.aboutToX()+picDirection.dx(),performer.aboutToY()+picDirection.dy());
+    if(object==null || performer==object)return;
+    player=world.maps.player;
+    if(performer==player)startCommand("playerConntact");
+    if(object==player)startCommand("eventConntact");
+  }
+  //エンターイベントを呼び出します
+  void enterEvent(){
+    if(!world.canMove)return;
+    player=world.maps.player;
+    if(performer.aboutX()==player.aboutX()+player.direction.dx()
+    && performer.aboutY()==player.aboutY()+player.direction.dy()){startCommand("enter");}
+  }
+}
+
+class CommonEventCommand extends Command{
+  XML EventXML = loadXML("Basicdata/Common.xml");
+  CommonEventCommand(MapEvent performer,int pageNumber){
+    super(performer,pageNumber);
+    xml=EventXML.getChildren("Event")[pageNumber];
+    trigger=xml.getString("Trigger");
+  }
+  void parallelEvent(){
+    super.parallelEvent();
+  }
+  void calledEvent(){
+    startCommand("called");
+  }
+}
+
+class BaseCommand{
+  Command parent;
+  void doCommand(XML data){}
+  void getParent(Command parent){
+    this.parent=parent;
+  }
+  void nextCommand(){
+    parent.commandID++;
+    parent.doCommand();    
+  }
+}
+
+class CallCommonEvent extends BaseCommand{
+  void doCommand(){
+  }
+  void stopCommand(){
+    nextCommand();
+  }
+}
+
+class Wait extends BaseCommand{
+  int time=0;
+  void doCommand(XML data){
+    time++;
+    if(time==Integer.parseInt(data.getContent())){
+      time=0;
+      nextCommand();
+    }
+  }  
+}
+class ImageCommand extends BaseCommand{
+  int x=0,y=0,id=0;
+  String path="";
+  void doCommand(XML data){
+    x=data.getInt("x");
+    y=data.getInt("y");
+    id=data.getInt("id");
+    path=data.getContent();
+    world.image.setImage(path,x,y,id);
+  }
+}
+
+class Talk extends BaseCommand{  
+  void start(){
+    world.image.setImage("Picture/MessageBox.png",100,100,-1);
+  }
+  
+}
+class Image{
+  HashMap<Integer,Integer> imageID;
+  ArrayList <ImageData>imageList;
+  PImage image;
+  ImageData data;
+  Image(){
+    imageID = new HashMap<Integer,Integer>();
+    imageList = new ArrayList<ImageData>(10);
+  }
+  
+  void removeImage(int id){
+    imageList.remove(imageID.get(id));
+    imageID.remove(id);
+  }
+  
+  void setImage(String path,int x,int y,int id){
+    data=new ImageData(loadImage(path), x, y);
+    imageList.add(data);
+    imageID.put(id,imageList.size());
+  }
+  
+  void draw(){
+    for(int i=0;i<imageList.size();i++)
+    image(imageList.get(i).image
+    ,imageList.get(i).x
+    ,imageList.get(i).y);
+  }
+  
+  class ImageData{
+    PImage image;
+    int x,y;
+    ImageData(PImage image,int x,int y){
+      this.image=image;
+      this.x=x;
+      this.y=y;
+    }
+  }
+}
+
+class Sound extends BaseCommand{
+  AudioPlayer player;
+  int x=0;
+  void doCommand(XML data){
+    if("stop".equals(data.getContent())){stop();return;}
+    try{player.close();}catch(NullPointerException e){}
+    try {
+      player = minim.loadFile("BGM/"+data.getContent()); //mp3ファイルを指定する
+      player.play();  //再生
+      player.rewind();
+    }catch (NullPointerException e) {
+      println("ファイルを読み込めませんでした");
+    }
+    nextCommand();
+  }
+  void stop(){
+    player.close();  //サウンドデータを終了
+    minim.stop();
+    nextCommand();
+  }
+}
+
+class Warp extends BaseCommand{
+  void doCommand(XML data){
+    println("a");
+    int map=data.getInt("map");
+    println(map);
+    int x=data.getInt("x");
+    int y=data.getInt("y");
+    world.maps.loadMap(x,y,map);
+    nextCommand();
+  }
+}
+
+class DBGet extends BaseCommand{
+  void doCommand(XML data){
+    DB db =new DB();
+  }
+}

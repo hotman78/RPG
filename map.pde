@@ -75,7 +75,7 @@ class Maps{
       }
     }
     for(int i=0;i<COMMON_SIZE;i++){
-      common[i].doCommand();
+      common[i].update();
       common[i].parallelEvent();
       common[i].automicEvent();
     }
